@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ConversationTable, { Conversation } from '@/components/dashboard/ConversationTable';
 import EmotionCard from '@/components/dashboard/EmotionCard';
@@ -17,11 +16,18 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 
+// Define the correct type for emotions data to fix the TypeScript error
+interface EmotionData {
+  label: '中性' | '喜' | '焦虑' | '怒';
+  count: number;
+  percentage: number;
+}
+
 const ConversationsPage = () => {
   const [activeTab, setActiveTab] = useState('enterprise');
 
-  // Mock data
-  const emotionsData = [
+  // Mock data - fixed type for emotionsData
+  const emotionsData: EmotionData[] = [
     { label: '中性', count: 175, percentage: 58.6 },
     { label: '喜', count: 70, percentage: 23.4 },
     { label: '焦虑', count: 35, percentage: 11.7 },
@@ -155,11 +161,11 @@ const ConversationsPage = () => {
         <TabsContent value="enterprise" className="space-y-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-md">对话检索</CardTitle>
+              <CardTitle className="text-md">客户对话检索</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-4">
-                <Input placeholder="用户名称" />
+                <Input placeholder="客户名称" />
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="选择租户" />
@@ -200,7 +206,7 @@ const ConversationsPage = () => {
             <div className="md:col-span-2">
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-md">实时对话监控列表</CardTitle>
+                  <CardTitle className="text-md">实时客户对话监控</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ConversationTable conversations={conversations} />
@@ -211,12 +217,12 @@ const ConversationsPage = () => {
               <EmotionCard emotions={emotionsData} total={299} />
               <div className="grid grid-cols-1 gap-4">
                 <SceneTagsCard
-                  title="场景标签"
+                  title="客户场景标签"
                   tags={sceneTags}
                   badgeClassName="ai-tag scene"
                 />
                 <SceneTagsCard
-                  title="意图标签"
+                  title="客户意图标签"
                   tags={intentTags}
                   badgeClassName="ai-tag intent"
                 />

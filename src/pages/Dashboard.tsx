@@ -1,4 +1,3 @@
-
 import React from 'react';
 import StatCard from '@/components/dashboard/StatCard';
 import ConversationTable from '@/components/dashboard/ConversationTable';
@@ -7,6 +6,13 @@ import SceneTagsCard from '@/components/dashboard/SceneTagsCard';
 import { MessageSquare, ArrowUp, Clock, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+
+// Define the correct type for emotions data to fix the TypeScript error
+interface EmotionData {
+  label: '中性' | '喜' | '焦虑' | '怒';
+  count: number;
+  percentage: number;
+}
 
 const Dashboard = () => {
   // Mock data
@@ -31,7 +37,7 @@ const Dashboard = () => {
     },
   ];
 
-  const emotionsData = [
+  const emotionsData: EmotionData[] = [
     { label: '中性', count: 75, percentage: 58.6 },
     { label: '喜', count: 30, percentage: 23.4 },
     { label: '焦虑', count: 15, percentage: 11.7 },
@@ -147,7 +153,7 @@ const Dashboard = () => {
         <div className="md:col-span-2">
           <Card className="h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-md">实时对话监控</CardTitle>
+              <CardTitle className="text-md">实时客户对话监控</CardTitle>
               <Button variant="outline" size="sm">
                 查看全部
               </Button>
@@ -161,12 +167,12 @@ const Dashboard = () => {
           <EmotionCard emotions={emotionsData} total={128} />
           <div className="grid grid-cols-1 gap-4">
             <SceneTagsCard
-              title="场景标签"
+              title="客户场景标签"
               tags={sceneTags}
               badgeClassName="ai-tag scene"
             />
             <SceneTagsCard
-              title="意图标签"
+              title="客户意图标签"
               tags={intentTags}
               badgeClassName="ai-tag intent"
             />
