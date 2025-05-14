@@ -1,3 +1,4 @@
+
 import React from 'react';
 import StatCard from '@/components/dashboard/StatCard';
 import ConversationTable from '@/components/dashboard/ConversationTable';
@@ -65,6 +66,7 @@ const Dashboard = () => {
       userName: '张先生',
       botName: 'AI助手',
       tenant: '科技有限公司',
+      enterprise: '未来科技集团', // Added enterprise field
       project: '智慧园区',
       createdAt: '2025-05-14 09:15',
       tags: {
@@ -78,6 +80,7 @@ const Dashboard = () => {
       userName: '李经理',
       botName: 'AI助手',
       tenant: '金融服务公司',
+      enterprise: '华宇金融集团', // Added enterprise field
       project: '金融中心',
       createdAt: '2025-05-14 10:22',
       tags: {
@@ -91,6 +94,7 @@ const Dashboard = () => {
       userName: '王总',
       botName: 'AI助手',
       tenant: '咨询集团',
+      enterprise: '睿智咨询', // Added enterprise field
       project: '创新园',
       createdAt: '2025-05-14 11:05',
       tags: {
@@ -105,6 +109,7 @@ const Dashboard = () => {
       userName: '刘助理',
       botName: 'AI助手',
       tenant: '医疗科技',
+      enterprise: '健康医疗集团', // Added enterprise field
       project: '生命科学园',
       createdAt: '2025-05-14 13:30',
       tags: {
@@ -118,6 +123,7 @@ const Dashboard = () => {
       userName: '陈经理',
       botName: 'AI助手',
       tenant: '教育科技',
+      enterprise: '未来教育科技', // Added enterprise field
       project: '知识园区',
       createdAt: '2025-05-14 14:45',
       tags: {
