@@ -12,9 +12,10 @@ interface EmotionData {
 interface EmotionCardProps {
   emotions: EmotionData[];
   total: number;
+  className?: string;
 }
 
-const EmotionCard: React.FC<EmotionCardProps> = ({ emotions, total }) => {
+const EmotionCard: React.FC<EmotionCardProps> = ({ emotions, total, className }) => {
   const getEmotionColor = (emotion: string) => {
     switch (emotion) {
       case '喜':
@@ -29,7 +30,7 @@ const EmotionCard: React.FC<EmotionCardProps> = ({ emotions, total }) => {
   };
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader className="pb-2">
         <CardTitle className="text-md">情绪分布</CardTitle>
       </CardHeader>
@@ -45,7 +46,7 @@ const EmotionCard: React.FC<EmotionCardProps> = ({ emotions, total }) => {
               </div>
               <Progress
                 value={emotion.percentage}
-                className={`h-2 ${getEmotionColor(emotion.label)}`}
+                className={`h-2 ${getEmotionColor(emotion.label)} transition-all duration-300 ease-in-out`}
               />
             </div>
           ))}

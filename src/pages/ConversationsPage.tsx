@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import ConversationTable, { Conversation } from '@/components/dashboard/ConversationTable';
 import EmotionCard from '@/components/dashboard/EmotionCard';
 import SceneTagsCard from '@/components/dashboard/SceneTagsCard';
@@ -25,36 +26,17 @@ interface EmotionData {
 
 const ConversationsPage = () => {
   const [activeTab, setActiveTab] = useState('enterprise');
+  const [selectedTenant, setSelectedTenant] = useState<string>('all');
 
-  // Mock data - fixed type for emotionsData
-  const emotionsData: EmotionData[] = [
-    { label: '中性', count: 175, percentage: 58.6 },
-    { label: '喜', count: 70, percentage: 23.4 },
-    { label: '焦虑', count: 35, percentage: 11.7 },
-    { label: '怒', count: 19, percentage: 6.3 },
-  ];
-
-  const sceneTags = [
-    { label: '报修', count: 82 },
-    { label: '访客', count: 58 },
-    { label: '投诉', count: 35 },
-    { label: '活动', count: 73 },
-  ];
-
-  const intentTags = [
-    { label: '续租意向', count: 42 },
-    { label: '价格敏感', count: 28 },
-    { label: '功能探查', count: 63 },
-    { label: '园区活动', count: 55 },
-  ];
-
-  const conversations: Conversation[] = [
+  // Mock data - with enterprise information
+  const allConversations: Conversation[] = [
     {
       id: '1',
       channel: '微信',
       userName: '张先生',
       botName: 'AI助手',
       tenant: '科技有限公司',
+      enterprise: '未来科技集团',
       project: '智慧园区',
       createdAt: '2025-05-14 09:15',
       tags: {
@@ -68,6 +50,7 @@ const ConversationsPage = () => {
       userName: '李经理',
       botName: 'AI助手',
       tenant: '金融服务公司',
+      enterprise: '华宇金融集团',
       project: '金融中心',
       createdAt: '2025-05-14 10:22',
       tags: {
@@ -81,6 +64,7 @@ const ConversationsPage = () => {
       userName: '王总',
       botName: 'AI助手',
       tenant: '咨询集团',
+      enterprise: '睿智咨询',
       project: '创新园',
       createdAt: '2025-05-14 11:05',
       tags: {
@@ -95,6 +79,7 @@ const ConversationsPage = () => {
       userName: '刘助理',
       botName: 'AI助手',
       tenant: '医疗科技',
+      enterprise: '健康医疗集团',
       project: '生命科学园',
       createdAt: '2025-05-14 13:30',
       tags: {
@@ -108,6 +93,7 @@ const ConversationsPage = () => {
       userName: '陈经理',
       botName: 'AI助手',
       tenant: '教育科技',
+      enterprise: '未来教育科技',
       project: '知识园区',
       createdAt: '2025-05-14 14:45',
       tags: {
@@ -122,6 +108,7 @@ const ConversationsPage = () => {
       userName: '赵总监',
       botName: 'AI助手',
       tenant: '传媒公司',
+      enterprise: '创想传媒',
       project: '文创园',
       createdAt: '2025-05-14 15:10',
       tags: {
@@ -135,6 +122,7 @@ const ConversationsPage = () => {
       userName: '孙经理',
       botName: 'AI助手',
       tenant: '科技创新',
+      enterprise: '未来科技集团',
       project: '智慧园区',
       createdAt: '2025-05-14 16:25',
       tags: {
@@ -143,6 +131,81 @@ const ConversationsPage = () => {
       },
     },
   ];
+
+  // Filter conversations based on selected tenant
+  const filteredConversations = useMemo(() => {
+    if (selectedTenant === 'all') {
+      return allConversations;
+    }
+    return allConversations.filter(conversation => conversation.tenant === selectedTenant);
+  }, [selectedTenant]);
+
+  // Calculate emotion distribution based on filtered conversations
+  const calculateEmotionData = (conversations: Conversation[]): EmotionData[] => {
+    const emotionCounts: Record<string, number> = { '中性': 0, '喜': 0, '焦虑': 0, '怒': 0 };
+    
+    // Count each emotion
+    conversations.forEach(conversation => {
+      if (conversation.tags.emotion) {
+        emotionCounts[conversation.tags.emotion] += 1;
+      }
+    });
+    
+    const total = conversations.filter(c => c.tags.emotion).length || 1; // Avoid division by zero
+    
+    // Create emotion data array
+    return [
+      { label: '中性', count: emotionCounts['中性'], percentage: (emotionCounts['中性'] / total) * 100 },
+      { label: '喜', count: emotionCounts['喜'], percentage: (emotionCounts['喜'] / total) * 100 },
+      { label: '焦虑', count: emotionCounts['焦虑'], percentage: (emotionCounts['焦虑'] / total) * 100 },
+      { label: '怒', count: emotionCounts['怒'], percentage: (emotionCounts['怒'] / total) * 100 },
+    ];
+  };
+
+  // Calculate emotions based on filtered conversations
+  const emotionsData = useMemo(() => calculateEmotionData(filteredConversations), [filteredConversations]);
+
+  // Get unique tenants for the dropdown
+  const tenants = useMemo(() => {
+    const uniqueTenants = [...new Set(allConversations.map(c => c.tenant))];
+    return uniqueTenants;
+  }, []);
+
+  // Scene and intent tags can also be filtered by tenant
+  const sceneTags = useMemo(() => {
+    // Count scene tags in filtered conversations
+    const sceneCounts: Record<string, number> = {};
+    filteredConversations.forEach(conversation => {
+      if (conversation.tags.scene) {
+        sceneCounts[conversation.tags.scene] = (sceneCounts[conversation.tags.scene] || 0) + 1;
+      }
+    });
+    
+    return Object.entries(sceneCounts).map(([label, count]) => ({ label, count }));
+  }, [filteredConversations]);
+
+  const intentTags = useMemo(() => {
+    // Count intent tags in filtered conversations
+    const intentCounts: Record<string, number> = {};
+    filteredConversations.forEach(conversation => {
+      if (conversation.tags.intent) {
+        intentCounts[conversation.tags.intent] = (intentCounts[conversation.tags.intent] || 0) + 1;
+      }
+    });
+    
+    return Object.entries(intentCounts).map(([label, count]) => ({ label, count }));
+  }, [filteredConversations]);
+
+  // Calculate total for emotion card
+  const totalEmotions = useMemo(() => 
+    filteredConversations.filter(c => c.tags.emotion).length, 
+    [filteredConversations]
+  );
+
+  // Handle tenant selection change with animation
+  const handleTenantChange = (value: string) => {
+    setSelectedTenant(value);
+  };
 
   return (
     <div className="space-y-6">
@@ -166,18 +229,16 @@ const ConversationsPage = () => {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-4">
                 <Input placeholder="客户名称" />
-                <Select>
+                <Select value={selectedTenant} onValueChange={handleTenantChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="选择租户" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectItem value="all">全部租户</SelectItem>
-                      <SelectItem value="tech">科技公司</SelectItem>
-                      <SelectItem value="finance">金融服务</SelectItem>
-                      <SelectItem value="consulting">咨询集团</SelectItem>
-                      <SelectItem value="healthcare">医疗科技</SelectItem>
-                      <SelectItem value="education">教育科技</SelectItem>
+                      {tenants.map(tenant => (
+                        <SelectItem key={tenant} value={tenant}>{tenant}</SelectItem>
+                      ))}
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -209,22 +270,28 @@ const ConversationsPage = () => {
                   <CardTitle className="text-md">实时客户对话监控</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ConversationTable conversations={conversations} />
+                  <ConversationTable conversations={filteredConversations} />
                 </CardContent>
               </Card>
             </div>
             <div className="space-y-4">
-              <EmotionCard emotions={emotionsData} total={299} />
+              <EmotionCard 
+                emotions={emotionsData} 
+                total={totalEmotions} 
+                className="transition-all duration-300 ease-in-out" 
+              />
               <div className="grid grid-cols-1 gap-4">
                 <SceneTagsCard
                   title="客户场景标签"
                   tags={sceneTags}
                   badgeClassName="ai-tag scene"
+                  className="transition-all duration-300 ease-in-out"
                 />
                 <SceneTagsCard
                   title="客户意图标签"
                   tags={intentTags}
                   badgeClassName="ai-tag intent"
+                  className="transition-all duration-300 ease-in-out"
                 />
               </div>
             </div>

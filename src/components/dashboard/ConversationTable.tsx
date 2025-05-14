@@ -17,6 +17,7 @@ export interface Conversation {
   userName: string;
   botName: string;
   tenant: string;
+  enterprise: string; // Added enterprise field
   project: string;
   createdAt: string;
   tags: {
@@ -54,6 +55,7 @@ const ConversationTable: React.FC<ConversationTableProps> = ({
           <TableRow>
             <TableHead className="w-[80px]">客户</TableHead>
             <TableHead>渠道</TableHead>
+            <TableHead>企业</TableHead> {/* Added enterprise column */}
             <TableHead>租户</TableHead>
             <TableHead>项目</TableHead>
             <TableHead>会话时间</TableHead>
@@ -80,6 +82,7 @@ const ConversationTable: React.FC<ConversationTableProps> = ({
                   {conversation.channel}
                 </div>
               </TableCell>
+              <TableCell>{conversation.enterprise}</TableCell> {/* Display enterprise */}
               <TableCell>{conversation.tenant}</TableCell>
               <TableCell>{conversation.project}</TableCell>
               <TableCell>{conversation.createdAt}</TableCell>
