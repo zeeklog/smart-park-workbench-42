@@ -1,0 +1,180 @@
+
+import React from 'react';
+import StatCard from '@/components/dashboard/StatCard';
+import ConversationTable from '@/components/dashboard/ConversationTable';
+import EmotionCard from '@/components/dashboard/EmotionCard';
+import SceneTagsCard from '@/components/dashboard/SceneTagsCard';
+import { MessageSquare, ArrowUp, Clock, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+const Dashboard = () => {
+  // Mock data
+  const stats = [
+    {
+      title: '今日对话总数',
+      value: '128',
+      icon: <MessageSquare size={20} />,
+      trend: { value: 12, isPositive: true },
+    },
+    {
+      title: '解决率',
+      value: '94%',
+      icon: <Check size={20} />,
+      trend: { value: 5, isPositive: true },
+    },
+    {
+      title: '平均响应时长',
+      value: '1.5分钟',
+      icon: <Clock size={20} />,
+      trend: { value: 8, isPositive: false },
+    },
+  ];
+
+  const emotionsData = [
+    { label: '中性', count: 75, percentage: 58.6 },
+    { label: '喜', count: 30, percentage: 23.4 },
+    { label: '焦虑', count: 15, percentage: 11.7 },
+    { label: '怒', count: 8, percentage: 6.3 },
+  ];
+
+  const sceneTags = [
+    { label: '报修', count: 42 },
+    { label: '访客', count: 28 },
+    { label: '投诉', count: 15 },
+    { label: '活动', count: 43 },
+  ];
+
+  const intentTags = [
+    { label: '续租意向', count: 12 },
+    { label: '价格敏感', count: 8 },
+    { label: '功能探查', count: 23 },
+    { label: '园区活动', count: 15 },
+  ];
+
+  const conversations = [
+    {
+      id: '1',
+      channel: '微信' as const,
+      userName: '张先生',
+      botName: 'AI助手',
+      tenant: '科技有限公司',
+      project: '智慧园区',
+      createdAt: '2025-05-14 09:15',
+      tags: {
+        emotion: '中性' as const,
+        scene: '报修' as const,
+      },
+    },
+    {
+      id: '2',
+      channel: '小程序' as const,
+      userName: '李经理',
+      botName: 'AI助手',
+      tenant: '金融服务公司',
+      project: '金融中心',
+      createdAt: '2025-05-14 10:22',
+      tags: {
+        emotion: '喜' as const,
+        intent: '续租意向' as const,
+      },
+    },
+    {
+      id: '3',
+      channel: '企微应用' as const,
+      userName: '王总',
+      botName: 'AI助手',
+      tenant: '咨询集团',
+      project: '创新园',
+      createdAt: '2025-05-14 11:05',
+      tags: {
+        emotion: '怒' as const,
+        scene: '投诉' as const,
+        intent: '价格敏感' as const,
+      },
+    },
+    {
+      id: '4',
+      channel: '微信' as const,
+      userName: '刘助理',
+      botName: 'AI助手',
+      tenant: '医疗科技',
+      project: '生命科学园',
+      createdAt: '2025-05-14 13:30',
+      tags: {
+        emotion: '焦虑' as const,
+        scene: '访客' as const,
+      },
+    },
+    {
+      id: '5',
+      channel: '小程序' as const,
+      userName: '陈经理',
+      botName: 'AI助手',
+      tenant: '教育科技',
+      project: '知识园区',
+      createdAt: '2025-05-14 14:45',
+      tags: {
+        emotion: '中性' as const,
+        scene: '活动' as const,
+        intent: '园区活动' as const,
+      },
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">园区AI工作台</h1>
+        <p className="text-muted-foreground">
+          欢迎回来，这里是您的服务数据概览。
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {stats.map((stat, i) => (
+          <StatCard
+            key={i}
+            title={stat.title}
+            value={stat.value}
+            icon={stat.icon}
+            trend={stat.trend}
+          />
+        ))}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <Card className="h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-md">实时对话监控</CardTitle>
+              <Button variant="outline" size="sm">
+                查看全部
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <ConversationTable conversations={conversations} />
+            </CardContent>
+          </Card>
+        </div>
+        <div className="space-y-4">
+          <EmotionCard emotions={emotionsData} total={128} />
+          <div className="grid grid-cols-1 gap-4">
+            <SceneTagsCard
+              title="场景标签"
+              tags={sceneTags}
+              badgeClassName="ai-tag scene"
+            />
+            <SceneTagsCard
+              title="意图标签"
+              tags={intentTags}
+              badgeClassName="ai-tag intent"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
