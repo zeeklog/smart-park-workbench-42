@@ -3,8 +3,6 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   MessageSquare, 
-  Monitor, 
-  FileText, 
   MessageSquareWarning, 
   Users, 
   Calendar,
@@ -23,16 +21,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       name: '企业对话分析',
       icon: <MessageSquare size={20} />,
       path: '/conversations',
-    },
-    {
-      name: '服务概览',
-      icon: <Monitor size={20} />,
-      path: '/service-overview',
-    },
-    {
-      name: '服务质量报表',
-      icon: <FileText size={20} />,
-      path: '/service-reports',
     },
     {
       name: '投诉处理',

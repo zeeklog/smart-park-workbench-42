@@ -25,8 +25,6 @@ const App = () => (
         <Routes>
           <Route path="/" element={<MainLayout><Dashboard /></MainLayout>} />
           <Route path="/conversations" element={<MainLayout><ConversationsPage /></MainLayout>} />
-          <Route path="/service-overview" element={<MainLayout><Dashboard /></MainLayout>} />
-          <Route path="/service-reports" element={<MainLayout><Dashboard /></MainLayout>} />
           <Route path="/complaints" element={<MainLayout><ComplaintsPage /></MainLayout>} />
           <Route path="/customer-visits" element={<MainLayout><CustomerVisitsPage /></MainLayout>} />
           <Route path="/customer-profiles" element={<MainLayout><CustomerProfilesPage /></MainLayout>} />
