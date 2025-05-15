@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { 
   Table, TableHeader, TableHead, TableBody, TableRow, TableCell 
@@ -74,7 +75,19 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
     
     // Simulate AI content generation
     setTimeout(() => {
+      const aiGeneratedContent = "1、昨晚空调检修后冷凝水是否仍有渗漏？夜间温度是否改善？（关联工单 1245665432）\n" + 
+        "2、上周五晚间 Wi-Fi 断流 2 次，目前连接是否稳定？需不需要我现场测速？（来源：负向情绪关键词"Wi-Fi"）\n" + 
+        "3、下周园区音乐节已开放线上报名，您或同事是否需要团体票名额预留？（来源：活动）";
+      
       onGenerateContent(selectedVisit.id);
+      
+      // Update the selected visit's content directly for immediate UI update
+      if (selectedVisit) {
+        selectedVisit.content = aiGeneratedContent;
+        selectedVisit.status = 'analyzed';
+        selectedVisit.generatedAt = new Date().toISOString().split('T')[0];
+      }
+      
       setIsGenerating(false);
       
       toast({
@@ -181,13 +194,13 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
             </DialogTitle>
           </DialogHeader>
           <div className="p-4 bg-muted/50 rounded-md whitespace-pre-line">
-            {selectedVisit?.content || '暂无拜访内容'}
+            {selectedVisit?.content || '请点击AI生成'}
           </div>
           <DialogFooter className="flex justify-between space-x-4">
             <Button 
               variant="outline" 
               onClick={handleAIGenerate}
-              disabled={isGenerating || (selectedVisit?.content ? true : false)}
+              disabled={isGenerating}
             >
               <Wand2 className="mr-2 h-4 w-4" />
               {isGenerating ? '生成中...' : 'AI生成'}
@@ -203,6 +216,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
                   });
                 }
               }}
+              disabled={!selectedVisit?.content}
             >
               <Copy className="mr-2 h-4 w-4" />
               复制
