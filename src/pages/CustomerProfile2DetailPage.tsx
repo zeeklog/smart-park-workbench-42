@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, RefreshCw, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { 
   Radar, 
@@ -35,7 +34,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 const CustomerProfile2DetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const [showAnalysisDialog, setShowAnalysisDialog] = useState(false);
@@ -80,9 +78,7 @@ const CustomerProfile2DetailPage = () => {
     }),
     analysis: '该客户满意度一直维持在较高水平，近期满意度有小幅上升趋势。客户对物业服务反应积极，特别是在环境维护和安全方面的评价很高。建议保持当前服务质量，可考虑提供个性化增值服务来进一步提升满意度。',
     riskPointAnalysis: '预测在2025年2月6日可能出现满意度下滑风险点，建议提前关注并安排主动拜访。',
-    renewalProbability: 0.95,
     renewalAnalysis: '基于历史满意度、服务响应速度和客户反馈，该企业续租意向非常高，续约概率约为95%。建议在续约前3个月主动与客户商谈续约事宜，关注其业务扩张需求，可能需要增加租赁面积。',
-    businessRisk: '稳定增长',
     businessRiskAnalysis: '该企业运营状况良好，员工规模稳步增长，经营风险较低。近期有融资计划，可能对办公环境有更高要求，需关注其发展需求。',
     lastComplaint: '2024-12-15',
     complaintFrequency: '低',
@@ -241,266 +237,254 @@ const CustomerProfile2DetailPage = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 w-[400px]">
-          <TabsTrigger value="overview">总体概览</TabsTrigger>
-          <TabsTrigger value="details">详细分析</TabsTrigger>
-        </TabsList>
-        
-        {/* Overview Tab - Now with just the analysis text */}
-        <TabsContent value="overview" className="space-y-6">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-md">企业分析概览</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-base">{customerData.analysis}</p>
-            </CardContent>
-          </Card>
+      {/* Enterprise Analysis Overview */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md">企业分析概览</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-base">{customerData.analysis}</p>
+        </CardContent>
+      </Card>
 
-          {/* Satisfaction Trend Chart */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-md">满意度趋势预测 (40天)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer 
-                config={{
-                  history: {
-                    label: "历史数据",
-                    theme: {
-                      light: "#8884d8",
-                      dark: "#8884d8"
-                    }
-                  },
-                  forecast: {
-                    label: "预测趋势",
-                    theme: {
-                      light: "#82ca9d",
-                      dark: "#82ca9d"
-                    }
-                  }
-                }}
-                className="w-full aspect-[4/2] sm:aspect-[16/5]"
-              >
-                <LineChart
-                  data={combinedChartData}
-                  margin={{
-                    top: 20,
-                    right: 20,
-                    left: 0,
-                    bottom: 10,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis 
-                    dataKey="formattedDate" 
-                    label={{ value: '日期', position: 'insideBottomRight', offset: -5 }}
-                    domain={['dataMin', 'dataMax']}
-                    ticks={getXAxisTicks()}
+      {/* Satisfaction Trend Chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-md">满意度趋势预测 (40天)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer 
+            config={{
+              history: {
+                label: "历史数据",
+                theme: {
+                  light: "#8884d8",
+                  dark: "#8884d8"
+                }
+              },
+              forecast: {
+                label: "预测趋势",
+                theme: {
+                  light: "#82ca9d",
+                  dark: "#82ca9d"
+                }
+              }
+            }}
+            className="w-full aspect-[4/2] sm:aspect-[16/5]"
+          >
+            <LineChart
+              data={combinedChartData}
+              margin={{
+                top: 20,
+                right: 20,
+                left: 0,
+                bottom: 10,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+              <XAxis 
+                dataKey="formattedDate" 
+                label={{ value: '日期', position: 'insideBottomRight', offset: -5 }}
+                domain={['dataMin', 'dataMax']}
+                ticks={getXAxisTicks()}
+              />
+              <YAxis 
+                domain={[0, 100]}
+                label={{ value: '满意度', angle: -90, position: 'insideLeft' }}
+              />
+              <ChartTooltip 
+                content={
+                  <ChartTooltipContent
+                    indicator="line"
+                    formatter={(value, name, props) => {
+                      return [
+                        `${value}分`,
+                        name,
+                        null,
+                        null,
+                        `${props.payload.formattedDate}`
+                      ];
+                    }}
                   />
-                  <YAxis 
-                    domain={[0, 100]}
-                    label={{ value: '满意度', angle: -90, position: 'insideLeft' }}
-                  />
-                  <ChartTooltip 
-                    content={
-                      <ChartTooltipContent
-                        indicator="line"
-                        formatter={(value, name, props) => {
-                          return [
-                            `${value}分`,
-                            name,
-                            null,
-                            null,
-                            `${props.payload.formattedDate}`
-                          ];
-                        }}
-                      />
-                    }
-                  />
-                  <Legend verticalAlign="top" height={40} />
-                  <Line 
-                    type="monotone" 
-                    name="历史数据"
-                    dataKey="score" 
-                    stroke="#8884d8" 
-                    strokeWidth={2} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    name="预测趋势"
-                    data={customerData.forecastData.map(item => ({ 
-                      ...item, 
-                      day: item.day + customerData.historicalData.length,
-                      formattedDate: formatChartDate(item.date)
-                    }))} 
-                    dataKey="score" 
-                    stroke="#82ca9d" 
-                    strokeWidth={2}
-                    strokeDasharray="5 5" 
-                  />
-                  {/* Reference line for risk point with updated label */}
-                  <ReferenceLine 
-                    x={riskPointDate} 
-                    stroke="red" 
-                    strokeDasharray="3 3" 
-                    label={{ 
-                      value: '风险点', 
-                      position: 'top', 
-                      fill: 'red',
-                      fontSize: 12,
-                      fontWeight: 'bold'
-                    }} 
-                  />
-                </LineChart>
-              </ChartContainer>
-              <div className="mt-4 space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  基于历史数据分析，预测从2025年1月1日至2025年2月9日期间内该企业满意度将保持稳定，略有上升趋势。
-                </p>
-                <p className="text-sm text-red-500 font-medium">
-                  {customerData.riskPointAnalysis}
-                </p>
-              </div>
-              
-              <div className="pt-4 border-t mt-4">
-                <p className="text-sm text-muted-foreground mb-2">分析结果有帮助吗？</p>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex gap-1" 
-                    onClick={() => handleFeedback(true)}
-                    disabled={feedbackSubmitted}
-                  >
-                    <ThumbsUp size={16} />
-                    准确
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex gap-1" 
-                    onClick={() => handleFeedback(false)}
-                    disabled={feedbackSubmitted}
-                  >
-                    <ThumbsDown size={16} />
-                    不准确
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        {/* Details Tab */}
-        <TabsContent value="details" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-md">续租分析</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl font-bold">续租概率：</span>
-                    <span className="text-3xl font-bold text-green-600">{Math.round(customerData.renewalProbability * 100)}%</span>
-                  </div>
-                  <p className="text-sm">{customerData.renewalAnalysis}</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-md">经营风险分析</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-2xl font-bold">风险评级：</span>
-                    <span className="text-3xl font-bold text-green-600">{customerData.businessRisk}</span>
-                  </div>
-                  <p className="text-sm">{customerData.businessRiskAnalysis}</p>
-                </div>
-              </CardContent>
-            </Card>
+                }
+              />
+              <Legend verticalAlign="top" height={40} />
+              <Line 
+                type="monotone" 
+                name="历史数据"
+                dataKey="score" 
+                stroke="#8884d8" 
+                strokeWidth={2} 
+              />
+              <Line 
+                type="monotone" 
+                name="预测趋势"
+                data={customerData.forecastData.map(item => ({ 
+                  ...item, 
+                  day: item.day + customerData.historicalData.length,
+                  formattedDate: formatChartDate(item.date)
+                }))} 
+                dataKey="score" 
+                stroke="#82ca9d" 
+                strokeWidth={2}
+                strokeDasharray="5 5" 
+              />
+              {/* Reference line for risk point with updated label */}
+              <ReferenceLine 
+                x={riskPointDate} 
+                stroke="red" 
+                strokeDasharray="3 3" 
+                label={{ 
+                  value: '风险点', 
+                  position: 'top', 
+                  fill: 'red',
+                  fontSize: 12,
+                  fontWeight: 'bold'
+                }} 
+              />
+            </LineChart>
+          </ChartContainer>
+          <div className="mt-4 space-y-2">
+            <p className="text-sm text-muted-foreground">
+              基于历史数据分析，预测从2025年1月1日至2025年2月9日期间内该企业满意度将保持稳定，略有上升趋势。
+            </p>
+            <p className="text-sm text-red-500 font-medium">
+              {customerData.riskPointAnalysis}
+            </p>
           </div>
+        </CardContent>
+      </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-md">投诉与工单情况</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <h3 className="font-medium mb-2">投诉情况</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">最近投诉日期</span>
-                      <span className="text-sm">{customerData.lastComplaint}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">投诉频率</span>
-                      <span className="text-sm">{customerData.complaintFrequency}</span>
-                    </div>
-                  </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-md">续租分析</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-2xl font-bold">续租概率：</span>
+                <span className="text-3xl font-bold text-green-600">{Math.round(95)}%</span>
+              </div>
+              <p className="text-sm">{customerData.renewalAnalysis}</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-md">经营风险分析</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2">
+                <span className="text-2xl font-bold">风险评级：</span>
+                <span className="text-3xl font-bold text-green-600">{customerData.businessRisk}</span>
+              </div>
+              <p className="text-sm">{customerData.businessRiskAnalysis}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-md">投诉与工单情况</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <h3 className="font-medium mb-2">投诉情况</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">最近投诉日期</span>
+                  <span className="text-sm">{customerData.lastComplaint}</span>
                 </div>
-                
-                <div>
-                  <h3 className="font-medium mb-2">工单统计</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">工单总数</span>
-                      <span className="text-sm">{customerData.workOrderStats.total}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">平均解决时间</span>
-                      <span className="text-sm">{customerData.workOrderStats.avgResolutionTime}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">满意率</span>
-                      <span className="text-sm">{customerData.workOrderStats.satisfactionRate}</span>
-                    </div>
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">投诉频率</span>
+                  <span className="text-sm">{customerData.complaintFrequency}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-md">关键对话记录</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {customerData.conversations.map((conversation, index) => (
-                  <div key={index} className="p-4 border rounded-md">
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium">{conversation.topic}</span>
-                      <span className="text-sm text-muted-foreground">{conversation.date}</span>
-                    </div>
-                    <div className="mb-2">
-                      <span className="text-sm text-muted-foreground mr-2">情绪评估:</span>
-                      <Badge variant={conversation.sentiment === '满意' ? 'outline' : 'secondary'}>
-                        {conversation.sentiment}
-                      </Badge>
-                    </div>
-                    <div>
-                      <span className="text-sm text-muted-foreground block mb-1">关键点:</span>
-                      <ul className="list-disc list-inside space-y-1">
-                        {conversation.keyPoints.map((point, i) => (
-                          <li key={i} className="text-sm">{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-2">工单统计</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">工单总数</span>
+                  <span className="text-sm">{customerData.workOrderStats.total}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">平均解决时间</span>
+                  <span className="text-sm">{customerData.workOrderStats.avgResolutionTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">满意率</span>
+                  <span className="text-sm">{customerData.workOrderStats.satisfactionRate}</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-md">关键对话记录</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {customerData.conversations.map((conversation, index) => (
+              <div key={index} className="p-4 border rounded-md">
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">{conversation.topic}</span>
+                  <span className="text-sm text-muted-foreground">{conversation.date}</span>
+                </div>
+                <div className="mb-2">
+                  <span className="text-sm text-muted-foreground mr-2">情绪评估:</span>
+                  <Badge variant={conversation.sentiment === '满意' ? 'outline' : 'secondary'}>
+                    {conversation.sentiment}
+                  </Badge>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground block mb-1">关键点:</span>
+                  <ul className="list-disc list-inside space-y-1">
+                    {conversation.keyPoints.map((point, i) => (
+                      <li key={i} className="text-sm">{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+      
+      <div className="pt-4 border-t mt-4">
+        <p className="text-sm text-muted-foreground mb-2">分析结果有帮助吗？</p>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex gap-1" 
+            onClick={() => handleFeedback(true)}
+            disabled={feedbackSubmitted}
+          >
+            <ThumbsUp size={16} />
+            准确
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex gap-1" 
+            onClick={() => handleFeedback(false)}
+            disabled={feedbackSubmitted}
+          >
+            <ThumbsDown size={16} />
+            不准确
+          </Button>
+        </div>
+      </div>
       
       {/* Analysis Process Dialog */}
       <Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
