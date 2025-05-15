@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -45,7 +46,7 @@ const formSchema = z.object({
   customerName: z.string({
     required_error: "请选择拜访客户",
   }),
-  subject: z.string().optional(),
+  subject: z.string().min(1, "请输入拜访主题"),
   visitDate: z.date({
     required_error: "请选择拜访时间",
   }),
@@ -61,12 +62,15 @@ export const AddVisitForm = ({ onAddVisit }: AddVisitFormProps) => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      subject: '',
+    }
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     onAddVisit({
       customerName: CUSTOMERS.find(c => c.id === values.customerName)?.name || values.customerName,
-      subject: values.subject || '常规拜访',
+      subject: values.subject,
       visitDate: format(values.visitDate, 'yyyy-MM-dd'),
       generatedAt: null
     });
@@ -131,18 +135,7 @@ export const AddVisitForm = ({ onAddVisit }: AddVisitFormProps) => {
               <FormItem>
                 <FormLabel>拜访主题</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="选择拜访主题（可选）" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="常规拜访">常规拜访</SelectItem>
-                      <SelectItem value="产品演示">产品演示</SelectItem>
-                      <SelectItem value="售后回访">售后回访</SelectItem>
-                      <SelectItem value="问题解决">问题解决</SelectItem>
-                      <SelectItem value="合同洽谈">合同洽谈</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input placeholder="请输入拜访主题" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -191,15 +184,6 @@ export const AddVisitForm = ({ onAddVisit }: AddVisitFormProps) => {
           />
 
           <div className="flex gap-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="gap-2"
-              onClick={handleGenerateAIContent}
-            >
-              <MessageSquare size={16} />
-              AI 生成拜访重点内容
-            </Button>
             <Button type="submit">保存</Button>
           </div>
         </form>
@@ -208,7 +192,7 @@ export const AddVisitForm = ({ onAddVisit }: AddVisitFormProps) => {
       <Dialog open={showAIContentDialog} onOpenChange={setShowAIContentDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>AI 生成拜访重点内容</DialogTitle>
+            <DialogTitle>拜访重点内容</DialogTitle>
           </DialogHeader>
           <div className="p-4 bg-muted/50 rounded-md whitespace-pre-line">
             {generatedContent}
@@ -226,22 +210,8 @@ export const AddVisitForm = ({ onAddVisit }: AddVisitFormProps) => {
             >
               复制
             </Button>
-            <Button 
-              onClick={() => {
-                setGeneratedContent(
-                  `对于${CUSTOMERS.find(c => c.id === form.getValues().customerName)?.name}的拜访重点建议（更新版）：\n\n` +
-                  `1. 关注对方企业近期战略动向，特别是数字化转型需求\n` +
-                  `2. 针对性展示我方解决方案与其业务场景的匹配点\n` +
-                  `3. 准备具体的行业案例，提升说服力\n` +
-                  `4. 关注对方决策流程和合作模式偏好`
-                );
-                toast({
-                  title: "内容已重新生成",
-                  description: "拜访重点内容已更新。",
-                });
-              }}
-            >
-              重新生成
+            <Button onClick={() => setShowAIContentDialog(false)}>
+              关闭
             </Button>
           </div>
         </DialogContent>

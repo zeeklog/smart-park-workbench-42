@@ -33,7 +33,8 @@ const CustomerVisitsPage = () => {
       visitDate: '2025-04-15',
       generatedAt: '2025-04-12',
       status: 'analyzed',
-      content: '1. 针对腾讯提出的服务稳定性问题，重点介绍我们最新的高可用架构\n2. 展示最新的安全防护措施\n3. 讨论SLA升级方案'
+      content: '1. 针对腾讯提出的服务稳定性问题，重点介绍我们最新的高可用架构\n2. 展示最新的安全防护措施\n3. 讨论SLA升级方案',
+      results: '1. 客户对我们的产品表示了浓厚的兴趣\n2. 他们希望能够针对特定场景进行定制化开发\n3. 价格仍然是一个需要进一步讨论的重要因素'
     }
   ]);
 
@@ -48,8 +49,9 @@ const CustomerVisitsPage = () => {
   };
 
   const handleGenerateContent = (id: string) => {
+    // This function is kept for compatibility but won't be used for new content generation
     setVisits(visits.map(visit => {
-      if (visit.id === id) {
+      if (visit.id === id && !visit.content) {
         return {
           ...visit,
           content: '1. 了解客户最新业务发展方向\n2. 提出我方解决方案与客户需求的匹配点\n3. 讨论合作深化的可能性',

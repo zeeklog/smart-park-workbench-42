@@ -10,7 +10,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Visit } from '@/pages/CustomerVisitsPage';
 import { 
-  FileText, Upload, Download, MessageSquare, Copy, Save, Search 
+  FileText, Upload, Download, Copy, Save
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
@@ -25,14 +25,9 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [visitResult, setVisitResult] = useState('');
   
-  const handleGenerateOrViewContent = (visit: Visit) => {
+  const handleViewContent = (visit: Visit) => {
     setSelectedVisit(visit);
     setShowContentDialog(true);
-    
-    // If content doesn't exist yet, generate it
-    if (!visit.content) {
-      onGenerateContent(visit.id);
-    }
   };
 
   const handleUploadResult = (visit: Visit) => {
@@ -44,10 +39,10 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
   const handleDownloadAnalysis = (visit: Visit) => {
     // In a real app, this would generate and download a file
     // Here we'll just show a toast notification
-    if (visit.status !== 'analyzed') {
+    if (!visit.results) {
       toast({
         title: "无法下载分析",
-        description: "请先生成拜访内容并上传拜访结果。",
+        description: "请先上传拜访结果。",
         variant: "destructive",
       });
       return;
@@ -127,10 +122,10 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
                     variant="outline" 
                     size="sm" 
                     className="gap-1" 
-                    onClick={() => handleGenerateOrViewContent(visit)}
+                    onClick={() => handleViewContent(visit)}
                   >
-                    {visit.content ? <FileText size={16} /> : <MessageSquare size={16} />}
-                    {visit.content ? "查看拜访内容" : "AI 生成"}
+                    <FileText size={16} />
+                    查看拜访内容
                   </Button>
                   
                   <Button 
@@ -148,7 +143,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
                     size="sm" 
                     className="gap-1"
                     onClick={() => handleDownloadAnalysis(visit)}
-                    disabled={visit.status !== 'analyzed'}
+                    disabled={!visit.results}
                   >
                     <Download size={16} />
                     下载拜访分析表
@@ -169,7 +164,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
             </DialogTitle>
           </DialogHeader>
           <div className="p-4 bg-muted/50 rounded-md whitespace-pre-line">
-            {selectedVisit?.content || '生成中...'}
+            {selectedVisit?.content || '暂无拜访内容'}
           </div>
           <DialogFooter className="flex justify-end space-x-4">
             <Button 
@@ -186,20 +181,6 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
             >
               <Copy className="mr-2 h-4 w-4" />
               复制
-            </Button>
-            <Button 
-              onClick={() => {
-                if (selectedVisit) {
-                  onGenerateContent(selectedVisit.id);
-                  toast({
-                    title: "内容已重新生成",
-                    description: "拜访内容已更新。",
-                  });
-                }
-              }}
-            >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              重新生成
             </Button>
           </DialogFooter>
         </DialogContent>
