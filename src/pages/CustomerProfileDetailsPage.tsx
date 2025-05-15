@@ -73,6 +73,11 @@ const CustomerProfileDetailsPage = () => {
     riskPointAnalysis: '预测在2025年2月6日可能出现满意度下滑风险点，建议提前关注并安排主动拜访。',
   };
 
+  // Format date in the required "2/24" format
+  const formatChartDate = (date: Date) => {
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
   const radarData = [
     { subject: '投诉健康', A: customerData.dimensionScores.complaintHealth, fullMark: 100 },
     { subject: '诉求解决', A: customerData.dimensionScores.resolutionAbility, fullMark: 100 },
@@ -101,24 +106,19 @@ const CustomerProfileDetailsPage = () => {
     navigate('/customer-profiles');
   };
 
-  // Format date for chart display
-  const formatDate = (date: Date) => {
-    return `${(date.getMonth() + 1)}月${date.getDate()}日`;
-  };
-
   // Combine historical and forecast data for the chart
   const combinedChartData = [
     ...customerData.historicalData.map(item => ({ 
       ...item, 
       type: '历史数据',
       riskPoint: false,
-      formattedDate: formatDate(item.date)
+      formattedDate: formatChartDate(item.date)
     })),
     ...customerData.forecastData.map(item => ({ 
       ...item, 
       type: '预测趋势',
       day: item.day + customerData.historicalData.length,
-      formattedDate: formatDate(item.date)
+      formattedDate: formatChartDate(item.date)
     }))
   ];
 
@@ -128,12 +128,28 @@ const CustomerProfileDetailsPage = () => {
     ? customerData.historicalData.length + riskPointItem.day 
     : 36; // Default to day 36 if not found
   const riskPointDate = riskPointItem 
-    ? formatDate(riskPointItem.date) 
-    : '2月6日'; // Default risk date
+    ? formatChartDate(riskPointItem.date) 
+    : '2/6'; // Default risk date in the new format
 
   // Get company initials for avatar
   const getInitials = (name: string) => {
     return name.charAt(0);
+  };
+
+  // Generate tick values for the x-axis with the new date format
+  const getXAxisTicks = () => {
+    const ticks = [];
+    // Add tick for every 5 days
+    for (let i = 0; i < combinedChartData.length; i += 5) {
+      if (combinedChartData[i]) {
+        ticks.push(combinedChartData[i].formattedDate);
+      }
+    }
+    // Ensure the risk point date is included
+    if (riskPointItem && !ticks.includes(riskPointDate)) {
+      ticks.push(riskPointDate);
+    }
+    return ticks;
   };
 
   return (
@@ -279,10 +295,7 @@ const CustomerProfileDetailsPage = () => {
                 dataKey="formattedDate" 
                 label={{ value: '日期', position: 'insideBottomRight', offset: -5 }}
                 domain={['dataMin', 'dataMax']}
-                ticks={[
-                  '1月1日', '1月5日', '1月10日', '1月15日', '1月20日', 
-                  '1月25日', '1月30日', '2月4日', '2月9日'
-                ]}
+                ticks={getXAxisTicks()}
               />
               <YAxis 
                 domain={[0, 100]}
@@ -308,7 +321,6 @@ const CustomerProfileDetailsPage = () => {
               <Line 
                 type="monotone" 
                 name="历史数据"
-                data={customerData.historicalData} 
                 dataKey="score" 
                 stroke="#8884d8" 
                 strokeWidth={2} 
@@ -319,19 +331,25 @@ const CustomerProfileDetailsPage = () => {
                 data={customerData.forecastData.map(item => ({ 
                   ...item, 
                   day: item.day + customerData.historicalData.length,
-                  formattedDate: formatDate(item.date)
+                  formattedDate: formatChartDate(item.date)
                 }))} 
                 dataKey="score" 
                 stroke="#82ca9d" 
                 strokeWidth={2}
                 strokeDasharray="5 5" 
               />
-              {/* Reference line for risk point */}
+              {/* Reference line for risk point with updated label */}
               <ReferenceLine 
                 x={riskPointDate} 
                 stroke="red" 
                 strokeDasharray="3 3" 
-                label={{ value: '风险点', position: 'top', fill: 'red' }} 
+                label={{ 
+                  value: '风险点', 
+                  position: 'top', 
+                  fill: 'red',
+                  fontSize: 12,
+                  fontWeight: 'bold'
+                }} 
               />
             </LineChart>
           </ChartContainer>
