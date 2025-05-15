@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Table, TableHeader, TableHead, TableBody, TableRow, TableCell 
@@ -10,7 +9,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Visit } from '@/pages/CustomerVisitsPage';
 import { 
-  FileText, Upload, Download, Copy, Save
+  FileText, Upload, Download, Copy, Save, Wand2
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
@@ -24,6 +23,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
   const [showContentDialog, setShowContentDialog] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [visitResult, setVisitResult] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   
   const handleViewContent = (visit: Visit) => {
     setSelectedVisit(visit);
@@ -65,6 +65,23 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
     });
     
     setShowUploadDialog(false);
+  };
+
+  const handleAIGenerate = () => {
+    if (!selectedVisit) return;
+    
+    setIsGenerating(true);
+    
+    // Simulate AI content generation
+    setTimeout(() => {
+      onGenerateContent(selectedVisit.id);
+      setIsGenerating(false);
+      
+      toast({
+        title: "AI内容已生成",
+        description: "拜访内容已通过AI自动生成。",
+      });
+    }, 1500);
   };
 
   // Simulating file upload
@@ -125,7 +142,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
                     onClick={() => handleViewContent(visit)}
                   >
                     <FileText size={16} />
-                    查看拜访内容
+                    拜访内容
                   </Button>
                   
                   <Button 
@@ -166,7 +183,15 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
           <div className="p-4 bg-muted/50 rounded-md whitespace-pre-line">
             {selectedVisit?.content || '暂无拜访内容'}
           </div>
-          <DialogFooter className="flex justify-end space-x-4">
+          <DialogFooter className="flex justify-between space-x-4">
+            <Button 
+              variant="outline" 
+              onClick={handleAIGenerate}
+              disabled={isGenerating || (selectedVisit?.content ? true : false)}
+            >
+              <Wand2 className="mr-2 h-4 w-4" />
+              {isGenerating ? '生成中...' : 'AI生成'}
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => {

@@ -4,6 +4,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddVisitForm } from '@/components/visits/AddVisitForm';
 import { VisitList } from '@/components/visits/VisitList';
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 export interface Visit {
   id: string;
@@ -37,6 +41,7 @@ const CustomerVisitsPage = () => {
       results: '1. 客户对我们的产品表示了浓厚的兴趣\n2. 他们希望能够针对特定场景进行定制化开发\n3. 价格仍然是一个需要进一步讨论的重要因素'
     }
   ]);
+  const [showAddVisitDialog, setShowAddVisitDialog] = useState(false);
 
   const handleAddVisit = (newVisit: Omit<Visit, 'id' | 'status'>) => {
     const visit: Visit = {
@@ -46,10 +51,14 @@ const CustomerVisitsPage = () => {
       generatedAt: null
     };
     setVisits([...visits, visit]);
+    toast({
+      title: "拜访已创建",
+      description: "新的拜访记录已成功创建。",
+    });
+    setShowAddVisitDialog(false);
   };
 
   const handleGenerateContent = (id: string) => {
-    // This function is kept for compatibility but won't be used for new content generation
     setVisits(visits.map(visit => {
       if (visit.id === id && !visit.content) {
         return {
@@ -65,36 +74,31 @@ const CustomerVisitsPage = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">客户拜访管理</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">客户拜访管理</h1>
+        <Button onClick={() => setShowAddVisitDialog(true)}>
+          <Plus size={16} className="mr-1" /> 新增拜访
+        </Button>
+      </div>
       
-      <Tabs defaultValue="list">
-        <TabsList className="grid w-[400px] grid-cols-2 mb-6">
-          <TabsTrigger value="list">拜访列表</TabsTrigger>
-          <TabsTrigger value="add">新增拜访</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="list">
-          <Card>
-            <CardHeader>
-              <CardTitle>拜访列表</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <VisitList visits={visits} onGenerateContent={handleGenerateContent} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="add">
-          <Card>
-            <CardHeader>
-              <CardTitle>新增拜访</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AddVisitForm onAddVisit={handleAddVisit} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card>
+        <CardHeader>
+          <CardTitle>拜访列表</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <VisitList visits={visits} onGenerateContent={handleGenerateContent} />
+        </CardContent>
+      </Card>
+      
+      {/* Add Visit Dialog */}
+      <Dialog open={showAddVisitDialog} onOpenChange={setShowAddVisitDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>新增拜访</DialogTitle>
+          </DialogHeader>
+          <AddVisitForm onAddVisit={handleAddVisit} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
