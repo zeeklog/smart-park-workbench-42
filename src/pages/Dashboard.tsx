@@ -4,7 +4,6 @@ import StatCard from '@/components/dashboard/StatCard';
 import ConversationTable from '@/components/dashboard/ConversationTable';
 import EmotionCard from '@/components/dashboard/EmotionCard';
 import SceneTagsCard from '@/components/dashboard/SceneTagsCard';
-import { MessageSquare, ArrowUp, Clock, Check } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -16,28 +15,7 @@ interface EmotionData {
 }
 
 const Dashboard = () => {
-  // Mock data
-  const stats = [
-    {
-      title: '今日对话总数',
-      value: '128',
-      icon: <MessageSquare size={20} />,
-      trend: { value: 12, isPositive: true },
-    },
-    {
-      title: '解决率',
-      value: '94%',
-      icon: <Check size={20} />,
-      trend: { value: 5, isPositive: true },
-    },
-    {
-      title: '平均响应时长',
-      value: '1.5分钟',
-      icon: <Clock size={20} />,
-      trend: { value: 8, isPositive: false },
-    },
-  ];
-
+  // Mock data for emotions
   const emotionsData: EmotionData[] = [
     { label: '中性', count: 75, percentage: 58.6 },
     { label: '喜', count: 30, percentage: 23.4 },
@@ -66,7 +44,7 @@ const Dashboard = () => {
       userName: '张先生',
       botName: 'AI助手',
       tenant: '科技有限公司',
-      enterprise: '未来科技集团', // Added enterprise field
+      enterprise: '未来科技集团',
       project: '智慧园区',
       createdAt: '2025-05-14 09:15',
       tags: {
@@ -80,7 +58,7 @@ const Dashboard = () => {
       userName: '李经理',
       botName: 'AI助手',
       tenant: '金融服务公司',
-      enterprise: '华宇金融集团', // Added enterprise field
+      enterprise: '华宇金融集团',
       project: '金融中心',
       createdAt: '2025-05-14 10:22',
       tags: {
@@ -94,7 +72,7 @@ const Dashboard = () => {
       userName: '王总',
       botName: 'AI助手',
       tenant: '咨询集团',
-      enterprise: '睿智咨询', // Added enterprise field
+      enterprise: '睿智咨询',
       project: '创新园',
       createdAt: '2025-05-14 11:05',
       tags: {
@@ -109,7 +87,7 @@ const Dashboard = () => {
       userName: '刘助理',
       botName: 'AI助手',
       tenant: '医疗科技',
-      enterprise: '健康医疗集团', // Added enterprise field
+      enterprise: '健康医疗集团',
       project: '生命科学园',
       createdAt: '2025-05-14 13:30',
       tags: {
@@ -123,7 +101,7 @@ const Dashboard = () => {
       userName: '陈经理',
       botName: 'AI助手',
       tenant: '教育科技',
-      enterprise: '未来教育科技', // Added enterprise field
+      enterprise: '未来教育科技',
       project: '知识园区',
       createdAt: '2025-05-14 14:45',
       tags: {
@@ -141,18 +119,6 @@ const Dashboard = () => {
         <p className="text-muted-foreground">
           欢迎回来，这里是您的服务数据概览。
         </p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        {stats.map((stat, i) => (
-          <StatCard
-            key={i}
-            title={stat.title}
-            value={stat.value}
-            icon={stat.icon}
-            trend={stat.trend}
-          />
-        ))}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
