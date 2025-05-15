@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -121,7 +120,7 @@ const NotificationSettingsPage = () => {
               onClick={syncPersonnel}
             >
               <UserPlus className="mr-2 h-4 w-4" />
-              重新同步
+              同步
             </Button>
           </div>
         )}
