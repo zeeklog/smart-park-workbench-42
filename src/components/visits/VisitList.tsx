@@ -9,7 +9,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Visit } from '@/pages/CustomerVisitsPage';
 import { 
-  FileText, Upload, Download, Copy, Save, Wand2, FileWord
+  FileText, Upload, Download, Copy, Save, Wand2
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
@@ -265,7 +265,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
               >
                 <div className="flex gap-2">
                   <Upload className="h-10 w-10 text-gray-400" />
-                  <FileWord className="h-10 w-10 text-blue-500" />
+                  <FileText className="h-10 w-10 text-blue-500" />
                 </div>
                 <span className="mt-2 block text-sm font-medium text-gray-700">
                   点击上传拜访照片或Word文档
