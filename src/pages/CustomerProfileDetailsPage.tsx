@@ -33,6 +33,9 @@ const CustomerProfileDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
+  // Start with January 1st as base date
+  const baseDate = new Date(2025, 0, 1); // January 1, 2025
+  
   // Mock data - in a real application, you would fetch this data based on the ID
   const customerData = {
     id: id,
@@ -46,17 +49,28 @@ const CustomerProfileDetailsPage = () => {
     },
     trendTags: ['稳定', '优质客户', '高满意度'],
     riskStatus: '低风险',
-    historicalData: Array.from({ length: 30 }, (_, i) => ({
-      day: i + 1,
-      score: Math.floor(85 + Math.random() * 15),
-    })),
-    forecastData: Array.from({ length: 10 }, (_, i) => ({
-      day: i + 1,
-      score: Math.floor(88 + Math.random() * 12),
-      riskPoint: i === 6 ? true : false, // Mark day 6 as a risk point
-    })),
+    historicalData: Array.from({ length: 30 }, (_, i) => {
+      const date = new Date(baseDate);
+      date.setDate(baseDate.getDate() + i);
+      return {
+        day: i + 1,
+        date: date,
+        score: Math.floor(85 + Math.random() * 15),
+      };
+    }),
+    forecastData: Array.from({ length: 10 }, (_, i) => {
+      const date = new Date(baseDate);
+      date.setDate(baseDate.getDate() + 30 + i);
+      const isRiskPoint = i === 6;
+      return {
+        day: i + 1,
+        date: date,
+        score: Math.floor(88 + Math.random() * 12),
+        riskPoint: isRiskPoint, // Mark day 6 as a risk point
+      };
+    }),
     analysis: '该客户满意度一直维持在较高水平，近期满意度有小幅上升趋势。客户对物业服务反应积极，特别是在环境维护和安全方面的评价很高。建议保持当前服务质量，可考虑提供个性化增值服务来进一步提升满意度。',
-    riskPointAnalysis: '预测在第36天可能出现满意度下滑风险点，建议提前关注并安排主动拜访。',
+    riskPointAnalysis: '预测在2025年2月6日可能出现满意度下滑风险点，建议提前关注并安排主动拜访。',
   };
 
   const radarData = [
@@ -87,19 +101,35 @@ const CustomerProfileDetailsPage = () => {
     navigate('/customer-profiles');
   };
 
+  // Format date for chart display
+  const formatDate = (date: Date) => {
+    return `${(date.getMonth() + 1)}月${date.getDate()}日`;
+  };
+
   // Combine historical and forecast data for the chart
   const combinedChartData = [
     ...customerData.historicalData.map(item => ({ 
       ...item, 
       type: '历史数据',
-      riskPoint: false
+      riskPoint: false,
+      formattedDate: formatDate(item.date)
     })),
     ...customerData.forecastData.map(item => ({ 
       ...item, 
       type: '预测趋势',
-      day: item.day + customerData.historicalData.length
+      day: item.day + customerData.historicalData.length,
+      formattedDate: formatDate(item.date)
     }))
   ];
+
+  // Find risk point date for reference line
+  const riskPointItem = customerData.forecastData.find(item => item.riskPoint);
+  const riskPointDay = riskPointItem 
+    ? customerData.historicalData.length + riskPointItem.day 
+    : 36; // Default to day 36 if not found
+  const riskPointDate = riskPointItem 
+    ? formatDate(riskPointItem.date) 
+    : '2月6日'; // Default risk date
 
   // Get company initials for avatar
   const getInitials = (name: string) => {
@@ -197,7 +227,6 @@ const CustomerProfileDetailsPage = () => {
                 </Badge>
               </div>
               <div className="space-y-1 pt-2">
-                <p className="text-xs text-muted-foreground">AI标签</p>
                 <div className="flex flex-wrap gap-1">
                   {customerData.tags.map((tag, index) => (
                     <Badge key={index} variant="outline" className="ai-tag intent">
@@ -247,10 +276,13 @@ const CustomerProfileDetailsPage = () => {
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
-                dataKey="day" 
-                label={{ value: '天数', position: 'insideBottomRight', offset: -5 }}
-                domain={[1, 40]}
-                ticks={[1, 5, 10, 15, 20, 25, 30, 35, 40]}
+                dataKey="formattedDate" 
+                label={{ value: '日期', position: 'insideBottomRight', offset: -5 }}
+                domain={['dataMin', 'dataMax']}
+                ticks={[
+                  '1月1日', '1月5日', '1月10日', '1月15日', '1月20日', 
+                  '1月25日', '1月30日', '2月4日', '2月9日'
+                ]}
               />
               <YAxis 
                 domain={[0, 100]}
@@ -260,6 +292,15 @@ const CustomerProfileDetailsPage = () => {
                 content={
                   <ChartTooltipContent
                     indicator="line"
+                    formatter={(value, name, props) => {
+                      return [
+                        `${value}分`,
+                        name,
+                        null,
+                        null,
+                        `${props.payload.formattedDate}`
+                      ];
+                    }}
                   />
                 }
               />
@@ -275,7 +316,11 @@ const CustomerProfileDetailsPage = () => {
               <Line 
                 type="monotone" 
                 name="预测趋势"
-                data={customerData.forecastData.map(item => ({ ...item, day: item.day + customerData.historicalData.length }))} 
+                data={customerData.forecastData.map(item => ({ 
+                  ...item, 
+                  day: item.day + customerData.historicalData.length,
+                  formattedDate: formatDate(item.date)
+                }))} 
                 dataKey="score" 
                 stroke="#82ca9d" 
                 strokeWidth={2}
@@ -283,7 +328,7 @@ const CustomerProfileDetailsPage = () => {
               />
               {/* Reference line for risk point */}
               <ReferenceLine 
-                x={36} 
+                x={riskPointDate} 
                 stroke="red" 
                 strokeDasharray="3 3" 
                 label={{ value: '风险点', position: 'top', fill: 'red' }} 
@@ -292,7 +337,7 @@ const CustomerProfileDetailsPage = () => {
           </ChartContainer>
           <div className="mt-4 space-y-2">
             <p className="text-sm text-muted-foreground">
-              基于历史数据分析，预测未来40天内该企业满意度将保持稳定，略有上升趋势。
+              基于历史数据分析，预测从2025年1月1日至2025年2月9日期间内该企业满意度将保持稳定，略有上升趋势。
             </p>
             <p className="text-sm text-red-500 font-medium">
               {customerData.riskPointAnalysis}

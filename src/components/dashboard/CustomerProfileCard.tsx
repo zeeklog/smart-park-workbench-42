@@ -100,7 +100,6 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
           </div>
           
           <div className="space-y-1">
-            <p className="text-xs text-muted-foreground">AI标签</p>
             <div className="flex flex-wrap gap-1">
               {profile.tags.map((tag, index) => (
                 <Badge key={index} variant="outline" className="ai-tag intent">

@@ -86,12 +86,10 @@ const CustomerProfilesPage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">客户画像</h1>
+        <h1 className="text-2xl font-bold tracking-tight">企业列表</h1>
       </div>
 
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold">实时画像</h2>
-        
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-md">企业搜索</CardTitle>
