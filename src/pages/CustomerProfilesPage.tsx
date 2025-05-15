@@ -1,4 +1,3 @@
-
 import React from 'react';
 import CustomerProfileCard from '@/components/dashboard/CustomerProfileCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,61 +8,79 @@ import { Search, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const CustomerProfilesPage = () => {
-  // Mock data
+  // Mock data with updated structure
   const customers = [
     {
       id: '1',
-      name: '张伟',
       company: '科技有限公司',
       tags: ['高价值客户', '续租意向高', '对服务满意'],
       satisfactionScore: 92,
+      dimensionScores: {
+        complaintHealth: 88,
+        resolutionAbility: 94,
+        emotionAssessment: 90,
+      },
       recentActivity: '昨日提交了会议室预订',
-      renewalProbability: 85,
     },
     {
       id: '2',
-      name: '李娜',
       company: '金融服务公司',
       tags: ['价格敏感', '续租不确定', '需求复杂'],
       satisfactionScore: 68,
+      dimensionScores: {
+        complaintHealth: 62,
+        resolutionAbility: 70,
+        emotionAssessment: 65,
+      },
       recentActivity: '三天前投诉空调问题',
-      renewalProbability: 45,
     },
     {
       id: '3',
-      name: '王强',
       company: '咨询集团',
       tags: ['长期客户', '扩张可能', '社交活跃'],
       satisfactionScore: 88,
+      dimensionScores: {
+        complaintHealth: 85,
+        resolutionAbility: 92,
+        emotionAssessment: 88,
+      },
       recentActivity: '今日参加了园区活动',
-      renewalProbability: 90,
     },
     {
       id: '4',
-      name: '刘明',
       company: '医疗科技',
       tags: ['增值服务用户', '注重安全', '对环境要求高'],
       satisfactionScore: 76,
+      dimensionScores: {
+        complaintHealth: 82,
+        resolutionAbility: 74,
+        emotionAssessment: 71,
+      },
       recentActivity: '上周反馈安全隐患',
-      renewalProbability: 65,
     },
     {
       id: '5',
-      name: '陈静',
       company: '教育科技',
       tags: ['新客户', '期望值高', '关注成本'],
       satisfactionScore: 82,
+      dimensionScores: {
+        complaintHealth: 80,
+        resolutionAbility: 78,
+        emotionAssessment: 89,
+      },
       recentActivity: '今日咨询扩租事宜',
-      renewalProbability: 75,
     },
     {
       id: '6',
-      name: '赵华',
       company: '传媒公司',
       tags: ['创意空间需求', '关注形象', '活动参与度高'],
       satisfactionScore: 94,
+      dimensionScores: {
+        complaintHealth: 92,
+        resolutionAbility: 95,
+        emotionAssessment: 96,
+      },
       recentActivity: '昨日预约参观新区域',
-      renewalProbability: 88,
     },
   ];
 
@@ -103,7 +120,7 @@ const CustomerProfilesPage = () => {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">客户画像</h1>
         <p className="text-muted-foreground">
-          查看和管理租户客户的AI生成画像和推送通知。
+          查看和管理租户企业的AI生成画像和推送通知。
         </p>
       </div>
 
@@ -116,11 +133,11 @@ const CustomerProfilesPage = () => {
         <TabsContent value="profiles" className="space-y-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-md">客户搜索</CardTitle>
+              <CardTitle className="text-md">企业搜索</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center space-x-2">
-                <Input placeholder="搜索客户名称或公司..." className="flex-1" />
+                <Input placeholder="搜索企业名称..." className="flex-1" />
                 <Button>
                   <Search size={16} className="mr-2" />
                   搜索
