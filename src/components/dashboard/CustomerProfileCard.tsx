@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
+import { Building } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface CustomerProfile {
   id: string;
@@ -15,7 +17,6 @@ interface CustomerProfile {
     emotionAssessment: number;
   };
   riskStatus?: string;
-  recentActivity?: string;
 }
 
 interface CustomerProfileCardProps {
@@ -48,6 +49,11 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
     navigate(`/customer-profiles/${profile.id}`);
   };
 
+  // Get company initials for avatar
+  const getInitials = (name: string) => {
+    return name.charAt(0);
+  };
+
   return (
     <Card 
       className="cursor-pointer hover:shadow-md transition-shadow" 
@@ -55,7 +61,12 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8 bg-primary/10">
+              <AvatarFallback className="text-primary">
+                {getInitials(profile.company)}
+              </AvatarFallback>
+            </Avatar>
             <CardTitle className="text-lg">{profile.company}</CardTitle>
           </div>
           {profile.riskStatus && (
@@ -68,7 +79,7 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
       <CardContent>
         <div className="space-y-4">
           <div className="flex justify-center">
-            <span className={`text-3xl font-bold ${getSatisfactionColor(profile.satisfactionScore)}`}>
+            <span className={`text-4xl font-bold ${getSatisfactionColor(profile.satisfactionScore)}`}>
               {profile.satisfactionScore}分
             </span>
           </div>
@@ -98,13 +109,6 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
               ))}
             </div>
           </div>
-
-          {profile.recentActivity && (
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground">最近活动</p>
-              <p className="text-sm">{profile.recentActivity}</p>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

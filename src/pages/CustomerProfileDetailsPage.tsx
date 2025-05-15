@@ -23,9 +23,11 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  ResponsiveContainer 
+  ResponsiveContainer,
+  ReferenceLine
 } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const CustomerProfileDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,11 +50,13 @@ const CustomerProfileDetailsPage = () => {
       day: i + 1,
       score: Math.floor(85 + Math.random() * 15),
     })),
-    forecastData: Array.from({ length: 30 }, (_, i) => ({
+    forecastData: Array.from({ length: 10 }, (_, i) => ({
       day: i + 1,
       score: Math.floor(88 + Math.random() * 12),
+      riskPoint: i === 6 ? true : false, // Mark day 6 as a risk point
     })),
     analysis: '该客户满意度一直维持在较高水平，近期满意度有小幅上升趋势。客户对物业服务反应积极，特别是在环境维护和安全方面的评价很高。建议保持当前服务质量，可考虑提供个性化增值服务来进一步提升满意度。',
+    riskPointAnalysis: '预测在第36天可能出现满意度下滑风险点，建议提前关注并安排主动拜访。',
   };
 
   const radarData = [
@@ -87,7 +91,8 @@ const CustomerProfileDetailsPage = () => {
   const combinedChartData = [
     ...customerData.historicalData.map(item => ({ 
       ...item, 
-      type: '历史数据'
+      type: '历史数据',
+      riskPoint: false
     })),
     ...customerData.forecastData.map(item => ({ 
       ...item, 
@@ -96,6 +101,11 @@ const CustomerProfileDetailsPage = () => {
     }))
   ];
 
+  // Get company initials for avatar
+  const getInitials = (name: string) => {
+    return name.charAt(0);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
@@ -103,11 +113,15 @@ const CustomerProfileDetailsPage = () => {
           <ArrowLeft size={16} className="mr-2" />
           返回
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">{customerData.company} - 客户画像详情</h1>
+        <div className="flex items-center gap-2">
+          <Avatar className="h-8 w-8 bg-primary/10">
+            <AvatarFallback className="text-primary">
+              {getInitials(customerData.company)}
+            </AvatarFallback>
+          </Avatar>
+          <h1 className="text-2xl font-bold tracking-tight">{customerData.company} - 客户画像详情</h1>
+        </div>
       </div>
-      <p className="text-muted-foreground">
-        查看企业的详细满意度分析和预测趋势。
-      </p>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Radar Chart Card */}
@@ -200,7 +214,7 @@ const CustomerProfileDetailsPage = () => {
       {/* Satisfaction Trend Chart */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-md">满意度趋势预测 (30天)</CardTitle>
+          <CardTitle className="text-md">满意度趋势预测 (40天)</CardTitle>
         </CardHeader>
         <CardContent>
           <ChartContainer 
@@ -235,8 +249,8 @@ const CustomerProfileDetailsPage = () => {
               <XAxis 
                 dataKey="day" 
                 label={{ value: '天数', position: 'insideBottomRight', offset: -5 }}
-                domain={[1, 30]}
-                ticks={[1, 5, 10, 15, 20, 25, 30]}
+                domain={[1, 40]}
+                ticks={[1, 5, 10, 15, 20, 25, 30, 35, 40]}
               />
               <YAxis 
                 domain={[0, 100]}
@@ -267,11 +281,21 @@ const CustomerProfileDetailsPage = () => {
                 strokeWidth={2}
                 strokeDasharray="5 5" 
               />
+              {/* Reference line for risk point */}
+              <ReferenceLine 
+                x={36} 
+                stroke="red" 
+                strokeDasharray="3 3" 
+                label={{ value: '风险点', position: 'top', fill: 'red' }} 
+              />
             </LineChart>
           </ChartContainer>
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
             <p className="text-sm text-muted-foreground">
-              基于历史数据分析，预测未来30天内该企业满意度将保持稳定，略有上升趋势。
+              基于历史数据分析，预测未来40天内该企业满意度将保持稳定，略有上升趋势。
+            </p>
+            <p className="text-sm text-red-500 font-medium">
+              {customerData.riskPointAnalysis}
             </p>
           </div>
         </CardContent>
