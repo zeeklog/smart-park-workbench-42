@@ -49,13 +49,15 @@ const CustomerProfile2DetailPage = () => {
     company: id === "1" ? "科技有限公司" : id === "2" ? "智能科技公司" : "创新科技集团",
     tags: ["高价值客户", "续租意向高", "对服务满意"],
     satisfactionScore: 92,
+    satisfactionTrend: id === "1" ? "上升" : id === "2" ? "稳定" : "下降",
+    renewalProbability: id === "1" ? "高" : id === "2" ? "中" : "低",
+    businessRisk: id === "1" ? "低" : id === "2" ? "中" : "高",
     dimensionScores: {
       complaintHealth: 88,
       resolutionAbility: 94,
       emotionAssessment: 90,
     },
     trendTags: ["稳定", "优质客户", "高满意度"],
-    riskStatus: "低风险",
     historicalData: Array.from({ length: 30 }, (_, i) => {
       const date = new Date(baseDate);
       date.setDate(baseDate.getDate() + i);
@@ -129,18 +131,6 @@ const CustomerProfile2DetailPage = () => {
     if (score >= 80) return 'text-green-500';
     if (score >= 60) return 'text-amber-500';
     return 'text-red-500';
-  };
-
-  const getRiskStatusColor = (status) => {
-    switch (status) {
-      case '高风险':
-        return 'bg-red-100 text-red-800 hover:bg-red-100';
-      case '中风险':
-        return 'bg-amber-100 text-amber-800 hover:bg-amber-100';
-      case '低风险':
-      default:
-        return 'bg-green-100 text-green-800 hover:bg-green-100';
-    }
   };
 
   const handleGoBack = () => {
@@ -257,121 +247,16 @@ const CustomerProfile2DetailPage = () => {
           <TabsTrigger value="details">详细分析</TabsTrigger>
         </TabsList>
         
-        {/* Overview Tab */}
+        {/* Overview Tab - Now with just the analysis text */}
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Radar Chart Card */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-md">维度评分分析</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                      <PolarGrid />
-                      <PolarAngleAxis dataKey="subject" />
-                      <PolarRadiusAxis domain={[0, 100]} />
-                      <Radar
-                        name="得分"
-                        dataKey="A"
-                        stroke="#8884d8"
-                        fill="#8884d8"
-                        fillOpacity={0.6}
-                      />
-                      <Tooltip />
-                    </RadarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">投诉健康</span>
-                    <span className="text-sm font-medium">{customerData.dimensionScores.complaintHealth}分</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">诉求解决能力</span>
-                    <span className="text-sm font-medium">{customerData.dimensionScores.resolutionAbility}分</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm font-medium">情绪判断</span>
-                    <span className="text-sm font-medium">{customerData.dimensionScores.emotionAssessment}分</span>
-                  </div>
-                  <div className="flex justify-between pt-2 border-t">
-                    <span className="text-sm font-bold">总体满意度</span>
-                    <span className={`text-sm font-bold ${getSatisfactionColor(customerData.satisfactionScore)}`}>
-                      {customerData.satisfactionScore}分
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Satisfaction Analysis Card */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-md">满意度分析</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm mb-2">{customerData.analysis}</p>
-                </div>
-                
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">趋势标签</p>
-                  <div className="flex flex-wrap gap-1">
-                    {customerData.trendTags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="space-y-1">
-                  <p className="text-xs text-muted-foreground">风险状态</p>
-                  <Badge variant="outline" className={getRiskStatusColor(customerData.riskStatus)}>
-                    {customerData.riskStatus}
-                  </Badge>
-                </div>
-                
-                <div className="space-y-1">
-                  <div className="flex flex-wrap gap-1">
-                    {customerData.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="ai-tag intent">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="pt-2 border-t mt-2">
-                  <p className="text-sm text-muted-foreground mb-2">分析结果有帮助吗？</p>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex gap-1" 
-                      onClick={() => handleFeedback(true)}
-                      disabled={feedbackSubmitted}
-                    >
-                      <ThumbsUp size={16} />
-                      准确
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="flex gap-1" 
-                      onClick={() => handleFeedback(false)}
-                      disabled={feedbackSubmitted}
-                    >
-                      <ThumbsDown size={16} />
-                      不准确
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-md">企业分析概览</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-base">{customerData.analysis}</p>
+            </CardContent>
+          </Card>
 
           {/* Satisfaction Trend Chart */}
           <Card>
@@ -477,6 +362,32 @@ const CustomerProfile2DetailPage = () => {
                 <p className="text-sm text-red-500 font-medium">
                   {customerData.riskPointAnalysis}
                 </p>
+              </div>
+              
+              <div className="pt-4 border-t mt-4">
+                <p className="text-sm text-muted-foreground mb-2">分析结果有帮助吗？</p>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex gap-1" 
+                    onClick={() => handleFeedback(true)}
+                    disabled={feedbackSubmitted}
+                  >
+                    <ThumbsUp size={16} />
+                    准确
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex gap-1" 
+                    onClick={() => handleFeedback(false)}
+                    disabled={feedbackSubmitted}
+                  >
+                    <ThumbsDown size={16} />
+                    不准确
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
