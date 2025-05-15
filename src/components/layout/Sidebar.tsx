@@ -7,7 +7,8 @@ import {
   FileText, 
   MessageSquareWarning, 
   Users, 
-  Calendar 
+  Calendar,
+  Bell
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -47,6 +48,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       name: '客户画像',
       icon: <Users size={20} />,
       path: '/customer-profiles',
+    },
+    {
+      name: '推送管理',
+      icon: <Bell size={20} />,
+      path: '/notification-settings',
     },
   ];
 

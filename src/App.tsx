@@ -11,6 +11,7 @@ import CustomerProfilesPage from "./pages/CustomerProfilesPage";
 import CustomerProfileDetailsPage from "./pages/CustomerProfileDetailsPage";
 import ComplaintsPage from "./pages/ComplaintsPage";
 import NotFound from "./pages/NotFound";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/customer-visits" element={<MainLayout><Dashboard /></MainLayout>} />
           <Route path="/customer-profiles" element={<MainLayout><CustomerProfilesPage /></MainLayout>} />
           <Route path="/customer-profiles/:id" element={<MainLayout><CustomerProfileDetailsPage /></MainLayout>} />
+          <Route path="/notification-settings" element={<MainLayout><NotificationSettingsPage /></MainLayout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
