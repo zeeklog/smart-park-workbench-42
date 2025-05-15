@@ -1,11 +1,9 @@
-
 import React from 'react';
 import StatCard from '@/components/dashboard/StatCard';
 import ConversationTable from '@/components/dashboard/ConversationTable';
 import EmotionCard from '@/components/dashboard/EmotionCard';
 import SceneTagsCard from '@/components/dashboard/SceneTagsCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 // Define the correct type for emotions data to fix the TypeScript error
 interface EmotionData {
@@ -124,11 +122,8 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="md:col-span-2">
           <Card className="h-full">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardHeader className="pb-2">
               <CardTitle className="text-md">实时客户对话监控</CardTitle>
-              <Button variant="outline" size="sm">
-                查看全部
-              </Button>
             </CardHeader>
             <CardContent>
               <ConversationTable conversations={conversations} />
