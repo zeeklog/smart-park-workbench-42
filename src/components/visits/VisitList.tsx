@@ -76,7 +76,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
     // Simulate AI content generation
     setTimeout(() => {
       const aiGeneratedContent = "1、昨晚空调检修后冷凝水是否仍有渗漏？夜间温度是否改善？（关联工单 1245665432）\n" + 
-        "2、上周五晚间 Wi-Fi 断流 2 次，目前连接是否稳定？需不需要我现场测速？（来源：负向情绪关键词"Wi-Fi"）\n" + 
+        "2、上周五晚间 Wi-Fi 断流 2 次，目前连接是否稳定？需不需要我现场测速？（来源：负向情绪关键词\"Wi-Fi\"）\n" + 
         "3、下周园区音乐节已开放线上报名，您或同事是否需要团体票名额预留？（来源：活动）";
       
       onGenerateContent(selectedVisit.id);
