@@ -12,6 +12,7 @@ import CustomerProfileDetailsPage from "./pages/CustomerProfileDetailsPage";
 import ComplaintsPage from "./pages/ComplaintsPage";
 import NotFound from "./pages/NotFound";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
+import CustomerVisitsPage from "./pages/CustomerVisitsPage";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +28,7 @@ const App = () => (
           <Route path="/service-overview" element={<MainLayout><Dashboard /></MainLayout>} />
           <Route path="/service-reports" element={<MainLayout><Dashboard /></MainLayout>} />
           <Route path="/complaints" element={<MainLayout><ComplaintsPage /></MainLayout>} />
-          <Route path="/customer-visits" element={<MainLayout><Dashboard /></MainLayout>} />
+          <Route path="/customer-visits" element={<MainLayout><CustomerVisitsPage /></MainLayout>} />
           <Route path="/customer-profiles" element={<MainLayout><CustomerProfilesPage /></MainLayout>} />
           <Route path="/customer-profiles/:id" element={<MainLayout><CustomerProfileDetailsPage /></MainLayout>} />
           <Route path="/notification-settings" element={<MainLayout><NotificationSettingsPage /></MainLayout>} />
