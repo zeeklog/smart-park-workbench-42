@@ -14,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
 import NotificationListPage from "./pages/NotificationListPage";
 import CustomerVisitsPage from "./pages/CustomerVisitsPage";
+import CustomerProfile2Page from "./pages/CustomerProfile2Page";
+import CustomerProfile2DetailPage from "./pages/CustomerProfile2DetailPage";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +32,8 @@ const App = () => (
           <Route path="/customer-visits" element={<MainLayout><CustomerVisitsPage /></MainLayout>} />
           <Route path="/customer-profiles" element={<MainLayout><CustomerProfilesPage /></MainLayout>} />
           <Route path="/customer-profiles/:id" element={<MainLayout><CustomerProfileDetailsPage /></MainLayout>} />
+          <Route path="/customer-profile2" element={<MainLayout><CustomerProfile2Page /></MainLayout>} />
+          <Route path="/customer-profile2/:id" element={<MainLayout><CustomerProfile2DetailPage /></MainLayout>} />
           <Route path="/notification-settings" element={<MainLayout><NotificationSettingsPage /></MainLayout>} />
           <Route path="/notification-list" element={<MainLayout><NotificationListPage /></MainLayout>} />
           <Route path="*" element={<NotFound />} />

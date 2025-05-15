@@ -7,7 +7,8 @@ import {
   Users, 
   Calendar,
   Bell,
-  List
+  List,
+  UserSearch
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -46,6 +47,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       name: '客户画像',
       icon: <Users size={20} />,
       path: '/customer-profiles',
+    },
+    {
+      name: '用户画像2',
+      icon: <UserSearch size={20} />,
+      path: '/customer-profile2',
     },
     {
       id: 'notification',

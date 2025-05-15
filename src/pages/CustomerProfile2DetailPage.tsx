@@ -1,11 +1,11 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Card, 
   CardContent, 
   CardHeader, 
-  CardTitle, 
-  CardFooter 
+  CardTitle
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const CustomerProfileDetailsPage = () => {
+const CustomerProfile2DetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
@@ -46,16 +46,16 @@ const CustomerProfileDetailsPage = () => {
   // Mock data - in a real application, you would fetch this based on the ID
   const customerData = {
     id: id,
-    company: '科技有限公司',
-    tags: ['高价值客户', '续租意向高', '对服务满意'],
+    company: id === "1" ? "科技有限公司" : id === "2" ? "智能科技公司" : "创新科技集团",
+    tags: ["高价值客户", "续租意向高", "对服务满意"],
     satisfactionScore: 92,
     dimensionScores: {
       complaintHealth: 88,
       resolutionAbility: 94,
       emotionAssessment: 90,
     },
-    trendTags: ['稳定', '优质客户', '高满意度'],
-    riskStatus: '低风险',
+    trendTags: ["稳定", "优质客户", "高满意度"],
+    riskStatus: "低风险",
     historicalData: Array.from({ length: 30 }, (_, i) => {
       const date = new Date(baseDate);
       date.setDate(baseDate.getDate() + i);
@@ -115,7 +115,7 @@ const CustomerProfileDetailsPage = () => {
   };
 
   // Format date in the required "2/24" format
-  const formatChartDate = (date: Date) => {
+  const formatChartDate = (date) => {
     return `${date.getMonth() + 1}/${date.getDate()}`;
   };
 
@@ -125,13 +125,13 @@ const CustomerProfileDetailsPage = () => {
     { subject: '情绪判断', A: customerData.dimensionScores.emotionAssessment, fullMark: 100 },
   ];
 
-  const getSatisfactionColor = (score: number) => {
+  const getSatisfactionColor = (score) => {
     if (score >= 80) return 'text-green-500';
     if (score >= 60) return 'text-amber-500';
     return 'text-red-500';
   };
 
-  const getRiskStatusColor = (status: string) => {
+  const getRiskStatusColor = (status) => {
     switch (status) {
       case '高风险':
         return 'bg-red-100 text-red-800 hover:bg-red-100';
@@ -144,7 +144,7 @@ const CustomerProfileDetailsPage = () => {
   };
 
   const handleGoBack = () => {
-    navigate('/customer-profiles');
+    navigate('/customer-profile2');
   };
 
   const handleRefreshAnalysis = () => {
@@ -159,7 +159,7 @@ const CustomerProfileDetailsPage = () => {
     }, 2000);
   };
 
-  const handleFeedback = (isPositive: boolean) => {
+  const handleFeedback = (isPositive) => {
     setFeedbackSubmitted(true);
     toast({
       title: isPositive ? "分析准确" : "分析需改进",
@@ -195,7 +195,7 @@ const CustomerProfileDetailsPage = () => {
     : '2/6'; // Default risk date in the new format
 
   // Get company initials for avatar
-  const getInitials = (name: string) => {
+  const getInitials = (name) => {
     return name.charAt(0);
   };
 
@@ -229,7 +229,7 @@ const CustomerProfileDetailsPage = () => {
                 {getInitials(customerData.company)}
               </AvatarFallback>
             </Avatar>
-            <h1 className="text-2xl font-bold tracking-tight">{customerData.company} - 客户画像详情</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{customerData.company} - 客户画像2详情</h1>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -618,4 +618,4 @@ const CustomerProfileDetailsPage = () => {
   );
 };
 
-export default CustomerProfileDetailsPage;
+export default CustomerProfile2DetailPage;
