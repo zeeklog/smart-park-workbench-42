@@ -3,14 +3,8 @@ import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Search, Save, Edit, UserPlus, Settings2 } from 'lucide-react';
+import { Search, Save, Edit, UserPlus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuCheckboxItem
-} from '@/components/ui/dropdown-menu';
 
 // Define notification types
 const notificationTypes = [
@@ -57,6 +51,7 @@ const NotificationSettingsPage = () => {
   }>>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isPersonnelSynced, setIsPersonnelSynced] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Filter users based on search query
@@ -66,6 +61,8 @@ const NotificationSettingsPage = () => {
 
   // Toggle notification type for a user
   const toggleNotification = (userId: string, notificationType: string) => {
+    if (userId !== editingUserId) return;
+    
     setUsers(prevUsers =>
       prevUsers.map(user => {
         if (user.id === userId) {
@@ -92,16 +89,15 @@ const NotificationSettingsPage = () => {
     });
   };
 
-  // Save user notification settings
-  const saveUserSettings = (userId: string, notifications: string[]) => {
+  // Start editing a user's notification settings
+  const startEditing = (userId: string) => {
+    setEditingUserId(userId);
+  };
+
+  // Save changes for the currently edited user
+  const saveUserSettings = (userId: string) => {
     // In a real app, here you would send the data to your backend
-    setUsers(prevUsers => 
-      prevUsers.map(user => 
-        user.id === userId 
-          ? { ...user, notifications } 
-          : user
-      )
-    );
+    setEditingUserId(null);
     
     toast({
       title: "保存成功",
@@ -156,7 +152,7 @@ const NotificationSettingsPage = () => {
                       {type.label}
                     </TableHead>
                   ))}
-                  <TableHead className="w-[100px] text-right">推送配置</TableHead>
+                  <TableHead className="w-[100px]">操作</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -168,42 +164,32 @@ const NotificationSettingsPage = () => {
                       <TableCell>{user.position}</TableCell>
                       {notificationTypes.map(type => (
                         <TableCell key={type.id} className="text-center">
-                          {user.notifications.includes(type.id) ? '✓' : '-'}
+                          <Checkbox
+                            checked={user.notifications.includes(type.id)}
+                            onCheckedChange={() => toggleNotification(user.id, type.id)}
+                            disabled={editingUserId !== user.id}
+                          />
                         </TableCell>
                       ))}
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Settings2 className="h-4 w-4 mr-1" />
-                              配置
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 bg-popover">
-                            {notificationTypes.map(type => {
-                              const isChecked = user.notifications.includes(type.id);
-                              return (
-                                <DropdownMenuCheckboxItem
-                                  key={type.id}
-                                  checked={isChecked}
-                                  onCheckedChange={() => toggleNotification(user.id, type.id)}
-                                >
-                                  {type.label}
-                                </DropdownMenuCheckboxItem>
-                              );
-                            })}
-                            <div className="border-t mt-2 pt-2 px-2">
-                              <Button 
-                                size="sm" 
-                                className="w-full"
-                                onClick={() => saveUserSettings(user.id, user.notifications)}
-                              >
-                                <Save className="h-4 w-4 mr-1" />
-                                保存
-                              </Button>
-                            </div>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                      <TableCell>
+                        {editingUserId === user.id ? (
+                          <Button 
+                            size="sm" 
+                            onClick={() => saveUserSettings(user.id)}
+                          >
+                            <Save className="h-4 w-4 mr-1" />
+                            保存
+                          </Button>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => startEditing(user.id)}
+                          >
+                            <Edit className="h-4 w-4 mr-1" />
+                            编辑
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
