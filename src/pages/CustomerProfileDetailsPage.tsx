@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Card, 
   CardContent, 
@@ -8,6 +8,8 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { 
   Radar, 
   RadarChart, 
@@ -27,6 +29,7 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 
 const CustomerProfileDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   
   // Mock data - in a real application, you would fetch this data based on the ID
   const customerData = {
@@ -76,6 +79,10 @@ const CustomerProfileDetailsPage = () => {
     }
   };
 
+  const handleGoBack = () => {
+    navigate('/customer-profiles');
+  };
+
   // Combine historical and forecast data for the chart
   const combinedChartData = [
     ...customerData.historicalData.map(item => ({ 
@@ -91,12 +98,16 @@ const CustomerProfileDetailsPage = () => {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex items-center space-x-4">
+        <Button variant="outline" onClick={handleGoBack}>
+          <ArrowLeft size={16} className="mr-2" />
+          返回
+        </Button>
         <h1 className="text-2xl font-bold tracking-tight">{customerData.company} - 客户画像详情</h1>
-        <p className="text-muted-foreground">
-          查看企业的详细满意度分析和预测趋势。
-        </p>
       </div>
+      <p className="text-muted-foreground">
+        查看企业的详细满意度分析和预测趋势。
+      </p>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Radar Chart Card */}
@@ -216,18 +227,20 @@ const CustomerProfileDetailsPage = () => {
               margin={{
                 top: 20,
                 right: 20,
-                left: 20,
-                bottom: 20,
+                left: 0,
+                bottom: 10,
               }}
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
               <XAxis 
                 dataKey="day" 
-                label={{ value: '天数', position: 'insideBottomRight', offset: -5 }} 
+                label={{ value: '天数', position: 'insideBottomRight', offset: -5 }}
+                domain={[1, 30]}
+                ticks={[1, 5, 10, 15, 20, 25, 30]}
               />
               <YAxis 
                 domain={[0, 100]}
-                label={{ value: '满意度', angle: -90, position: 'insideLeft' }} 
+                label={{ value: '满意度', angle: -90, position: 'insideLeft' }}
               />
               <ChartTooltip 
                 content={

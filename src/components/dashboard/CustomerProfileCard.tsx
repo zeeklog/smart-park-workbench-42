@@ -2,8 +2,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building } from 'lucide-react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
 interface CustomerProfile {
@@ -16,6 +14,7 @@ interface CustomerProfile {
     resolutionAbility: number;
     emotionAssessment: number;
   };
+  riskStatus?: string;
   recentActivity?: string;
 }
 
@@ -32,11 +31,18 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
     return 'text-red-500';
   };
 
-  const radarData = [
-    { subject: '投诉健康', A: profile.dimensionScores.complaintHealth, fullMark: 100 },
-    { subject: '诉求解决', A: profile.dimensionScores.resolutionAbility, fullMark: 100 },
-    { subject: '情绪判断', A: profile.dimensionScores.emotionAssessment, fullMark: 100 },
-  ];
+  const getRiskStatusColor = (status?: string) => {
+    if (!status) return '';
+    switch (status) {
+      case '高风险':
+        return 'bg-red-100 text-red-800 hover:bg-red-100';
+      case '中风险':
+        return 'bg-amber-100 text-amber-800 hover:bg-amber-100';
+      case '低风险':
+      default:
+        return 'bg-green-100 text-green-800 hover:bg-green-100';
+    }
+  };
 
   const handleCardClick = () => {
     navigate(`/customer-profiles/${profile.id}`);
@@ -49,40 +55,36 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
     >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Building size={20} />
-            </div>
-            <div>
-              <CardTitle className="text-lg">{profile.company}</CardTitle>
-            </div>
+          <div>
+            <CardTitle className="text-lg">{profile.company}</CardTitle>
           </div>
+          {profile.riskStatus && (
+            <Badge variant="outline" className={getRiskStatusColor(profile.riskStatus)}>
+              {profile.riskStatus}
+            </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="w-full h-[150px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" fontSize={11} />
-                <Radar
-                  name="得分"
-                  dataKey="A"
-                  stroke="#8884d8"
-                  fill="#8884d8"
-                  fillOpacity={0.5}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
+          <div className="flex justify-center">
+            <span className={`text-3xl font-bold ${getSatisfactionColor(profile.satisfactionScore)}`}>
+              {profile.satisfactionScore}分
+            </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-sm font-medium">总体满意度</span>
-              <span className={`text-sm font-bold ${getSatisfactionColor(profile.satisfactionScore)}`}>
-                {profile.satisfactionScore}分
-              </span>
+              <span className="text-muted-foreground">投诉健康</span>
+              <span>{profile.dimensionScores.complaintHealth}分</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">诉求解决</span>
+              <span>{profile.dimensionScores.resolutionAbility}分</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">情绪判断</span>
+              <span>{profile.dimensionScores.emotionAssessment}分</span>
             </div>
           </div>
           

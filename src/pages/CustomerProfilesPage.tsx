@@ -1,11 +1,11 @@
+
 import React from 'react';
 import CustomerProfileCard from '@/components/dashboard/CustomerProfileCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Bell } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { Search } from 'lucide-react';
 
 const CustomerProfilesPage = () => {
   // Mock data with updated structure
@@ -20,6 +20,7 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 94,
         emotionAssessment: 90,
       },
+      riskStatus: '低风险',
       recentActivity: '昨日提交了会议室预订',
     },
     {
@@ -32,6 +33,7 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 70,
         emotionAssessment: 65,
       },
+      riskStatus: '中风险',
       recentActivity: '三天前投诉空调问题',
     },
     {
@@ -44,6 +46,7 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 92,
         emotionAssessment: 88,
       },
+      riskStatus: '低风险',
       recentActivity: '今日参加了园区活动',
     },
     {
@@ -56,6 +59,7 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 74,
         emotionAssessment: 71,
       },
+      riskStatus: '中风险',
       recentActivity: '上周反馈安全隐患',
     },
     {
@@ -68,6 +72,7 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 78,
         emotionAssessment: 89,
       },
+      riskStatus: '低风险',
       recentActivity: '今日咨询扩租事宜',
     },
     {
@@ -80,38 +85,8 @@ const CustomerProfilesPage = () => {
         resolutionAbility: 95,
         emotionAssessment: 96,
       },
+      riskStatus: '低风险',
       recentActivity: '昨日预约参观新区域',
-    },
-  ];
-
-  const pushNotifications = [
-    {
-      id: '1',
-      title: '租户满意度下降预警',
-      company: '金融服务公司',
-      time: '今天 09:45',
-      type: 'warning',
-    },
-    {
-      id: '2',
-      title: '月度服务质量报告已生成',
-      company: '所有租户',
-      time: '昨天 16:30',
-      type: 'report',
-    },
-    {
-      id: '3',
-      title: '新的租户洞察可用',
-      company: '科技有限公司',
-      time: '2025-05-12 10:15',
-      type: 'insight',
-    },
-    {
-      id: '4',
-      title: '项目异常预警：电梯维护',
-      company: 'A栋',
-      time: '2025-05-10 14:22',
-      type: 'warning',
     },
   ];
 
@@ -120,15 +95,13 @@ const CustomerProfilesPage = () => {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">客户画像</h1>
         <p className="text-muted-foreground">
-          查看和管理租户企业的AI生成画像和推送通知。
+          查看和管理租户企业的AI生成画像。
         </p>
       </div>
 
       <Tabs defaultValue="profiles">
         <TabsList>
           <TabsTrigger value="profiles">实时画像</TabsTrigger>
-          <TabsTrigger value="maintenance">画像维护</TabsTrigger>
-          <TabsTrigger value="push">推送管理</TabsTrigger>
         </TabsList>
         <TabsContent value="profiles" className="space-y-4">
           <Card>
@@ -151,68 +124,6 @@ const CustomerProfilesPage = () => {
               <CustomerProfileCard key={customer.id} profile={customer} />
             ))}
           </div>
-        </TabsContent>
-
-        <TabsContent value="maintenance">
-          <Card>
-            <CardHeader>
-              <CardTitle>画像维护功能正在开发中...</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                该功能将在下一版本中推出，敬请期待。
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="push" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-md">推送内容查看</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {pushNotifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="flex items-center justify-between rounded-lg border p-4"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="rounded-full bg-blue-100 p-2 text-blue-600">
-                        <Bell size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{notification.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {notification.company}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {notification.time}
-                        </p>
-                      </div>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className={
-                        notification.type === 'warning'
-                          ? 'bg-amber-100 text-amber-800 hover:bg-amber-100'
-                          : notification.type === 'report'
-                          ? 'bg-blue-100 text-blue-800 hover:bg-blue-100'
-                          : 'bg-green-100 text-green-800 hover:bg-green-100'
-                      }
-                    >
-                      {notification.type === 'warning'
-                        ? '预警'
-                        : notification.type === 'report'
-                        ? '报告'
-                        : '洞察'}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>
