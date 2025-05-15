@@ -14,14 +14,12 @@ import { Input } from '@/components/ui/input';
 import { 
   ArrowUp,
   ArrowDown,
-  Search,
-  RefreshCw
+  Search
 } from 'lucide-react';
 
 const CustomerProfile2Page = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Mock data for customer profiles
   const customerProfiles = [
@@ -142,33 +140,39 @@ const CustomerProfile2Page = () => {
             <CardHeader className="pb-2">
               <CardTitle className="text-xl">{profile.company}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm">{profile.analysis}</p>
-              
-              <div className="grid grid-cols-3 gap-2">
-                <div className="flex flex-col items-center">
-                  <span className="text-xs text-muted-foreground">满意度趋势</span>
-                  <div className="flex items-center mt-1">
+            <CardContent>
+              {/* 3 Key indicators emphasized */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="flex flex-col items-center p-2 border rounded-md">
+                  <span className="text-xs text-muted-foreground mb-1">满意度趋势</span>
+                  <div className="flex items-center">
                     {getSatisfactionTrendIcon(profile.satisfactionTrend)}
-                    <span className={`font-medium ml-1 ${getSatisfactionTrendColor(profile.satisfactionTrend)}`}>
+                    <span className={`font-medium text-lg ${getSatisfactionTrendColor(profile.satisfactionTrend)}`}>
                       {profile.satisfactionTrend}
                     </span>
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-center">
-                  <span className="text-xs text-muted-foreground">续约概率</span>
-                  <Badge variant="outline" className={`mt-1 ${getProbabilityColor(profile.renewalProbability)}`}>
+                <div className="flex flex-col items-center p-2 border rounded-md">
+                  <span className="text-xs text-muted-foreground mb-1">续约概率</span>
+                  <Badge className={`mt-1 text-lg ${getProbabilityColor(profile.renewalProbability)}`}>
                     {profile.renewalProbability}
                   </Badge>
                 </div>
                 
-                <div className="flex flex-col items-center">
-                  <span className="text-xs text-muted-foreground">经营风险</span>
-                  <Badge variant="outline" className={`mt-1 ${getRiskColor(profile.businessRisk)}`}>
+                <div className="flex flex-col items-center p-2 border rounded-md">
+                  <span className="text-xs text-muted-foreground mb-1">经营风险</span>
+                  <Badge className={`mt-1 text-lg ${getRiskColor(profile.businessRisk)}`}>
                     {profile.businessRisk}
                   </Badge>
                 </div>
+              </div>
+              
+              {/* De-emphasized description */}
+              <div className="mt-2">
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {profile.analysis}
+                </p>
               </div>
             </CardContent>
             <CardFooter className="pt-0">
