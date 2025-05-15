@@ -2,9 +2,11 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Building } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { toast } from '@/hooks/use-toast';
 
 interface CustomerProfile {
   id: string;
@@ -17,6 +19,9 @@ interface CustomerProfile {
     emotionAssessment: number;
   };
   riskStatus?: string;
+  lastUpdated?: string;
+  renewalProbability?: number;
+  businessRisk?: string;
 }
 
 interface CustomerProfileCardProps {
@@ -25,6 +30,7 @@ interface CustomerProfileCardProps {
 
 const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) => {
   const navigate = useNavigate();
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
   
   const getSatisfactionColor = (score: number) => {
     if (score >= 80) return 'text-green-500';
@@ -45,8 +51,35 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
     }
   };
 
+  const getRenewalProbability = (probability?: number) => {
+    if (probability === undefined) return '';
+    if (probability >= 0.8) return '续租可能性高';
+    if (probability >= 0.5) return '续租可能性中';
+    return '续租可能性低';
+  };
+
+  const getRenewalProbabilityColor = (probability?: number) => {
+    if (probability === undefined) return '';
+    if (probability >= 0.8) return 'text-green-600';
+    if (probability >= 0.5) return 'text-amber-600';
+    return 'text-red-600';
+  };
+
   const handleCardClick = () => {
     navigate(`/customer-profiles/${profile.id}`);
+  };
+
+  const handleRefreshAnalysis = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRefreshing(true);
+    // Simulate refresh delay
+    setTimeout(() => {
+      setIsRefreshing(false);
+      toast({
+        title: "分析刷新完成",
+        description: `${profile.company}的企业分析已更新`,
+      });
+    }, 1500);
   };
 
   // Get company initials for avatar
@@ -56,7 +89,7 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
 
   return (
     <Card 
-      className="cursor-pointer hover:shadow-md transition-shadow" 
+      className="cursor-pointer hover:shadow-md transition-shadow relative" 
       onClick={handleCardClick}
     >
       <CardHeader className="pb-2">
@@ -75,6 +108,23 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
             </Badge>
           )}
         </div>
+        {profile.lastUpdated && (
+          <div className="flex justify-between items-center mt-1">
+            <span className="text-xs text-muted-foreground">
+              更新于: {profile.lastUpdated}
+            </span>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 w-7 p-0 rounded-full" 
+              onClick={handleRefreshAnalysis}
+              disabled={isRefreshing}
+            >
+              <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
+              <span className="sr-only">刷新分析</span>
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -97,6 +147,20 @@ const CustomerProfileCard: React.FC<CustomerProfileCardProps> = ({ profile }) =>
               <span className="text-muted-foreground">情绪判断</span>
               <span>{profile.dimensionScores.emotionAssessment}分</span>
             </div>
+            {profile.renewalProbability !== undefined && (
+              <div className="flex justify-between pt-1 border-t mt-1">
+                <span className="text-muted-foreground">续租分析</span>
+                <span className={getRenewalProbabilityColor(profile.renewalProbability)}>
+                  {getRenewalProbability(profile.renewalProbability)}
+                </span>
+              </div>
+            )}
+            {profile.businessRisk && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">经营风险</span>
+                <span>{profile.businessRisk}</span>
+              </div>
+            )}
           </div>
           
           <div className="space-y-1">
