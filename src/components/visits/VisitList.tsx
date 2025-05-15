@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { 
   Table, TableHeader, TableHead, TableBody, TableRow, TableCell 
@@ -10,7 +9,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Visit } from '@/pages/CustomerVisitsPage';
 import { 
-  FileText, Upload, Download, Copy, Save, Wand2
+  FileText, Upload, Download, Copy, Save, Wand2, FileWord
 } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
@@ -25,6 +24,7 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [visitResult, setVisitResult] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   
   const handleViewContent = (visit: Visit) => {
     setSelectedVisit(visit);
@@ -97,14 +97,30 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
     }, 1500);
   };
 
-  // Simulating file upload
+  // Updated file upload handler to support Word documents
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
+    // Check if the file is a Word document or an image
+    const isWordDoc = file.name.endsWith('.doc') || file.name.endsWith('.docx');
+    const isImage = file.type.startsWith('image/');
+    
+    if (!isWordDoc && !isImage) {
+      toast({
+        title: "不支持的文件格式",
+        description: "请上传Word文档(.doc, .docx)或图片文件",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setUploadedFileName(file.name);
+    
     // In a real app, you would process the file here
     // For now, we'll just simulate text extraction
-    setVisitResult(`从${selectedVisit?.customerName || '客户'}拜访中获取的信息：
+    const fileTypeText = isWordDoc ? "Word文档" : "图片";
+    setVisitResult(`从${selectedVisit?.customerName || '客户'}拜访中的${fileTypeText}获取的信息：
     
 1. 客户对我们的产品表示了浓厚的兴趣
 2. 他们希望能够针对特定场景进行定制化开发
@@ -112,8 +128,8 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
 4. 他们计划在下个季度扩大合作规模`);
     
     toast({
-      title: "图片上传成功",
-      description: "拜访结果图片已成功识别并转换为文本。",
+      title: `${fileTypeText}上传成功`,
+      description: `拜访结果${fileTypeText}已成功识别并转换为文本。`,
     });
   };
 
@@ -240,22 +256,32 @@ export const VisitList = ({ visits, onGenerateContent }: VisitListProps) => {
                 type="file"
                 id="file-upload"
                 className="hidden"
-                accept="image/*"
+                accept="image/*,.doc,.docx"
                 onChange={handleFileUpload}
               />
               <label 
                 htmlFor="file-upload"
                 className="cursor-pointer flex flex-col items-center justify-center"
               >
-                <Upload className="h-10 w-10 text-gray-400" />
+                <div className="flex gap-2">
+                  <Upload className="h-10 w-10 text-gray-400" />
+                  <FileWord className="h-10 w-10 text-blue-500" />
+                </div>
                 <span className="mt-2 block text-sm font-medium text-gray-700">
-                  点击上传拜访照片
+                  点击上传拜访照片或Word文档
                 </span>
                 <span className="mt-1 block text-xs text-gray-500">
-                  支持 PNG, JPG 格式
+                  支持 PNG, JPG, DOC, DOCX 格式
                 </span>
               </label>
             </div>
+            
+            {uploadedFileName && (
+              <div className="p-2 bg-blue-50 rounded-md text-sm text-blue-700 flex items-center gap-2">
+                <FileText size={16} />
+                <span>{uploadedFileName}</span>
+              </div>
+            )}
             
             {visitResult && (
               <div className="mt-4">
