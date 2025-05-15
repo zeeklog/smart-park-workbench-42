@@ -1,12 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   MessageSquare, 
   MessageSquareWarning, 
   Users, 
   Calendar,
-  Bell
+  Bell,
+  List
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -15,6 +16,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
   const location = useLocation();
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['notification']);
+
+  const toggleSubmenu = (menuId: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(menuId) 
+        ? prev.filter(id => id !== menuId)
+        : [...prev, menuId]
+    );
+  };
 
   const menuItems = [
     {
@@ -38,9 +48,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       path: '/customer-profiles',
     },
     {
+      id: 'notification',
       name: '推送管理',
       icon: <Bell size={20} />,
-      path: '/notification-settings',
+      hasSubMenu: true,
+      subMenuItems: [
+        {
+          name: '推送设置',
+          path: '/notification-settings',
+        },
+        {
+          name: '推送列表',
+          path: '/notification-list',
+        }
+      ]
     },
   ];
 
@@ -60,16 +81,51 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
         </div>
         <nav className="flex-1 space-y-2 px-2 py-4">
           {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`sidebar-item ${
-                location.pathname === item.path ? 'active' : ''
-              } ${isOpen ? '' : 'justify-center'}`}
-            >
-              {item.icon}
-              {isOpen && <span>{item.name}</span>}
-            </Link>
+            <div key={item.path || item.id}>
+              {item.hasSubMenu ? (
+                <>
+                  <button
+                    onClick={() => toggleSubmenu(item.id as string)}
+                    className={`sidebar-item ${isOpen ? '' : 'justify-center'}`}
+                  >
+                    {item.icon}
+                    {isOpen && (
+                      <>
+                        <span>{item.name}</span>
+                        <span className="ml-auto">
+                          {expandedMenus.includes(item.id as string) ? '▼' : '▶'}
+                        </span>
+                      </>
+                    )}
+                  </button>
+                  {isOpen && expandedMenus.includes(item.id as string) && (
+                    <div className="pl-8 mt-1 space-y-1">
+                      {item.subMenuItems?.map((subItem) => (
+                        <Link
+                          key={subItem.path}
+                          to={subItem.path}
+                          className={`sidebar-item text-sm ${
+                            location.pathname === subItem.path ? 'active' : ''
+                          }`}
+                        >
+                          <span>{subItem.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  to={item.path}
+                  className={`sidebar-item ${
+                    location.pathname === item.path ? 'active' : ''
+                  } ${isOpen ? '' : 'justify-center'}`}
+                >
+                  {item.icon}
+                  {isOpen && <span>{item.name}</span>}
+                </Link>
+              )}
+            </div>
           ))}
         </nav>
       </div>
