@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+import FloatingAssistant from '../common/FloatingAssistant';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {children}
         </main>
       </div>
+      <FloatingAssistant />
     </div>
   );
 };
