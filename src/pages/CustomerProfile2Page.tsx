@@ -11,10 +11,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   ArrowUp,
   ArrowDown,
-  Search
+  Search,
+  Building
 } from 'lucide-react';
 
 const CustomerProfile2Page = () => {
@@ -112,6 +114,11 @@ const CustomerProfile2Page = () => {
     }
   };
 
+  // Get company initials for avatar
+  const getInitials = (name) => {
+    return name.charAt(0);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -138,7 +145,14 @@ const CustomerProfile2Page = () => {
             onClick={() => handleCardClick(profile.id)}
           >
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl">{profile.company}</CardTitle>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Avatar className="h-8 w-8 bg-primary/10">
+                  <AvatarFallback className="text-primary">
+                    {getInitials(profile.company)}
+                  </AvatarFallback>
+                </Avatar>
+                {profile.company}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {/* 3 Key indicators emphasized */}
