@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -42,11 +41,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
       name: '客户拜访',
       icon: <Calendar size={20} />,
       path: '/customer-visits',
-    },
-    {
-      name: '客户画像',
-      icon: <Users size={20} />,
-      path: '/customer-profiles',
     },
     {
       name: '用户画像2',
